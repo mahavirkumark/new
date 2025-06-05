@@ -724,8 +724,7 @@ window.open("https://web.whatsapp.com/", "_blank");
 <!-- Include jsPDF library -->
 <!-- Include jsPDF library -->
 <!-- Include jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+<!-- jsPDF CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script type="module">
@@ -745,15 +744,71 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+  // PDF generation - secure: no personal info in PDF
+  function generateAndDownloadPDF({ voteGiven, voteReceiptId, timestamp }) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Background fill light gray
+    doc.setFillColor(245, 245, 245);
+    doc.rect(0, 0, 210, 297, 'F');
+
+    // Large watermark - centered, rotated
+    doc.setFontSize(50);
+    doc.setTextColor(230, 230, 230);
+    doc.setFont("helvetica", "bold");
+    doc.text("Election Commission of India", 105, 140, null, null, "center", 45);
+
+    // Header title
+    doc.setFontSize(20);
+    doc.setTextColor(0, 51, 102);
+    doc.text("Election Commission of India", 105, 30, null, null, "center");
+
+    // Line under header
+    doc.setDrawColor(0, 51, 102);
+    doc.setLineWidth(0.8);
+    doc.line(20, 35, 190, 35);
+
+    // Receipt content
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    doc.text(`Vote Receipt ID: ${voteReceiptId}`, 20, 60);
+    doc.text(`You have voted for: ${voteGiven}`, 20, 75);
+    doc.text(`Date & Time: ${timestamp}`, 20, 90);
+
+    // Polite message and email info
+    doc.setFontSize(12);
+    doc.setTextColor(0, 102, 51);
+    doc.text("An email confirmation has been sent to your registered email.", 20, 110);
+    doc.text("Thank you for exercising your democratic right.", 105, 270, null, null, "center");
+
+    // Governor signature placeholder
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text("________________________", 140, 200);
+    doc.text("Governor's Signature & Stamp", 140, 210);
+
+    // Save PDF with timestamp to avoid overwrites
+    doc.save(`Vote_Receipt_${voteReceiptId}_${Date.now()}.pdf`);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.forms['contact-form'];
     const submitButton = document.getElementById('submit');
-    const scriptURL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+    const scriptURL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'; // Replace with your Apps Script URL
 
     onAuthStateChanged(auth, user => {
       if (!user) {
         window.location.replace("index.html");
+        return;
       }
+      // You can show user displayName if needed (not for PDF)
+      const nameField = document.getElementById("full-name");
+      if (nameField) {
+        nameField.value = user.displayName || "";
+        nameField.disabled = true;
+      }
+      form.dataset.userEmail = user.email || "";
     });
 
     form.addEventListener('submit', async (e) => {
@@ -772,6 +827,7 @@ window.open("https://web.whatsapp.com/", "_blank");
       try {
         const formData = new FormData();
         formData.append("voteGiven", voteGiven);
+        formData.append("email", form.dataset.userEmail || "");
 
         const response = await fetch(scriptURL, {
           method: 'POST',
@@ -788,67 +844,25 @@ window.open("https://web.whatsapp.com/", "_blank");
         }
 
         if (result.result === "success") {
-          // Generate PDF with minimal info from server response
           generateAndDownloadPDF({
-            voteReceiptId: result.voteReceiptId,
             voteGiven,
+            voteReceiptId: result.voteReceiptId,
             timestamp: result.timestamp
           });
 
           alert("Thank you for voting! Your receipt has been downloaded.");
-          window.location.href = 'feedback.html';
+          setTimeout(() => window.location.href = "feedback.html", 1500);
         } else {
           throw new Error(result.message || "Submission failed");
         }
       } catch (error) {
-        console.error('Error!', error.message);
         alert("An error occurred. Please try again.");
         submitButton.disabled = false;
         submitButton.value = "Submit";
+        console.error(error);
       }
     });
   });
-
-  function generateAndDownloadPDF({ voteReceiptId, voteGiven, timestamp }) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Background color
-    doc.setFillColor(245, 245, 245);
-    doc.rect(10, 10, 190, 270, 'F');
-
-    // Header
-    doc.setFontSize(22);
-    doc.setTextColor(0, 51, 102);
-    doc.text("Election Commission of India", 105, 30, null, null, "center");
-
-    // Line under header
-    doc.setDrawColor(0, 51, 102);
-    doc.setLineWidth(0.8);
-    doc.line(20, 35, 190, 35);
-
-    // Receipt details
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-
-    doc.text(`Receipt ID: ${voteReceiptId}`, 20, 60);
-    doc.text(`Voted For: ${voteGiven}`, 20, 75);
-    doc.text(`Date & Time: ${timestamp}`, 20, 90);
-
-    // Governor's signature placeholder
-    doc.setFontSize(12);
-    doc.setTextColor(100);
-    doc.text("_____________________________", 130, 200);
-    doc.text("Governor's Signature & Stamp", 130, 210);
-
-    // Thank you note
-    doc.setFontSize(12);
-    doc.setTextColor(0, 102, 51);
-    doc.text("Thank you for exercising your democratic right.", 105, 250, null, null, "center");
-
-    const fileName = `Vote_Receipt_${voteReceiptId}.pdf`;
-    doc.save(fileName);
-  }
 </script>
 
 
