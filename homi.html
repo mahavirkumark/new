@@ -730,7 +730,6 @@ window.open("https://web.whatsapp.com/", "_blank");
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  // Firebase Config - replace with your config
   const firebaseConfig = {
     apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
     authDomain: "sk12-58e9e.firebaseapp.com",
@@ -744,9 +743,8 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const scriptURL = 'https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec';
+  const scriptURL = 'https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec'; // <-- Replace with your actual URL
 
-  // Generate PDF function
   function generateAndDownloadPDF({ firstName, voteGiven }) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -754,45 +752,39 @@ window.open("https://web.whatsapp.com/", "_blank");
     const now = new Date();
     const timestamp = now.toLocaleString();
 
-    // Draw watermark image (Election Commission Logo) center with transparency
-    const watermarkImgUrl = "https://upload.wikimedia.org/wikipedia/en/3/3a/Election_Commission_of_India_Logo.svg"; // transparent svg/png recommended
-
-    // Draw watermark - large and centered with low opacity
+    // Watermark (centered, faded)
+    const watermarkImgUrl = "https://upload.wikimedia.org/wikipedia/en/3/3a/Election_Commission_of_India_Logo.svg";
     doc.setGState(new doc.GState({opacity:0.1}));
-    doc.addImage(watermarkImgUrl, 'PNG', 40, 60, 130, 130); 
+    doc.addImage(watermarkImgUrl, 'PNG', 40, 60, 130, 130);
     doc.setGState(new doc.GState({opacity:1}));
 
-    // Draw Election Commission Logo top-left before heading
+    // Election Commission logo above heading
     const logoUrl = "https://upload.wikimedia.org/wikipedia/en/3/3a/Election_Commission_of_India_Logo.svg";
-
     doc.addImage(logoUrl, 'PNG', 85, 10, 40, 30);
 
-    // Heading centered below logo
+    // Heading
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
     doc.text("Election Commission of India", 105, 50, null, null, "center");
 
-    // Content
+    // Content with only first name in PDF
     doc.setFontSize(14);
     doc.setFont("helvetica", "normal");
     doc.text(`Name: ${firstName}`, 20, 80);
     doc.text(`Voted For: ${voteGiven}`, 20, 90);
     doc.text(`Date & Time: ${timestamp}`, 20, 100);
 
-    // Official Signature image bottom right
+    // Official signature bottom right
     const signatureUrl = "https://cdn.prod.website-files.com/61d7de73eec437f52da6d699/62161cf7328ad280841f653f_esignature-signature.png";
     doc.addImage(signatureUrl, 'PNG', 140, 120, 50, 20);
-
-    // Signature text
     doc.setFontSize(10);
     doc.text("Returning Officer", 145, 145);
 
-    // Footer message centered bottom
+    // Footer text
     doc.setFontSize(12);
     doc.text("Thank you for participating in the vote.", 105, 160, null, null, "center");
     doc.text("Your vote has been successfully submitted.", 105, 170, null, null, "center");
 
-    // Save PDF
     const fileName = `Vote_Receipt_${firstName}_${now.getTime()}.pdf`;
     doc.save(fileName);
   }
@@ -801,35 +793,30 @@ window.open("https://web.whatsapp.com/", "_blank");
     const form = document.forms['contact-form'];
     const submitButton = document.getElementById('submit');
 
-    // Prevent multiple voting
     if (localStorage.getItem("voted") === "true") {
       alert("You have already voted.");
       window.location.href = "feedback.html";
       return;
     }
 
-    // Firebase auth state check
     onAuthStateChanged(auth, user => {
       if (user && user.displayName) {
-        const firstName = user.displayName.split(' ')[0];
+        // Show full name on form page input
         document.getElementById("full-name").value = user.displayName;
         form.dataset.userEmail = user.email;
 
         const welcomeEl = document.getElementById("welcome-message");
-        if (welcomeEl) {
-          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
-        }
+        if (welcomeEl) welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
       } else {
-        // Not logged in
         window.location.replace("index.html");
       }
     });
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
 
       const fullName = document.getElementById('full-name').value.trim();
-      const firstName = fullName.split(' ')[0];
+      const firstName = fullName.split(' ')[0]; // Use only first name in PDF
       const voteGiven = document.getElementById('vote-given-to-party').value.trim();
 
       if (!fullName || !voteGiven) {
@@ -846,8 +833,15 @@ window.open("https://web.whatsapp.com/", "_blank");
 
         const response = await fetch(scriptURL, {
           method: 'POST',
-          body: formData
+          body: formData,
+          headers: {
+            'Accept': 'application/json',
+          },
         });
+
+        if (!response.ok) {
+          throw new Error(`Network response was not ok, status: ${response.status}`);
+        }
 
         const result = await response.json();
 
@@ -861,7 +855,6 @@ window.open("https://web.whatsapp.com/", "_blank");
         if (result.result === "success") {
           localStorage.setItem("voted", "true");
 
-          // Generate and download PDF
           generateAndDownloadPDF({ firstName, voteGiven });
 
           alert("Thank You for Voting, Your Vote is Submitted");
@@ -873,8 +866,8 @@ window.open("https://web.whatsapp.com/", "_blank");
           throw new Error(result.message || "Submission failed");
         }
       } catch (error) {
-        console.error('Fetch error:', error);
-        alert("An error occurred. Please try again.");
+        console.error("Submission error:", error);
+        alert("An error occurred while submitting your vote. Please try again.");
         submitButton.disabled = false;
         submitButton.value = "Submit";
       }
@@ -883,13 +876,15 @@ window.open("https://web.whatsapp.com/", "_blank");
 </script>
 
 <script>
-  // Disable right-click, F12, devtools shortcuts, screenshot, selection, etc.
+  // Disable right-click, developer tools, screenshot
   document.addEventListener('contextmenu', e => e.preventDefault());
 
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'F12' || 
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || 
-        e.key === 'F11') {
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+      e.key === 'F11'
+    ) {
       e.preventDefault();
     }
   });
@@ -899,7 +894,7 @@ window.open("https://web.whatsapp.com/", "_blank");
   document.addEventListener('keyup', e => {
     if (e.key === 'PrintScreen') {
       document.body.style.filter = 'blur(10px)';
-      setTimeout(() => document.body.style.filter = '', 1500);
+      setTimeout(() => (document.body.style.filter = ''), 1500);
     }
   });
 </script>
