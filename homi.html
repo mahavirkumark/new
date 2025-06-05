@@ -722,9 +722,15 @@ window.open("https://web.whatsapp.com/", "_blank");
   </script>
 <!-- Add jsPDF CDN -->
 <!-- Include jsPDF library -->
+<!-- Add jsPDF CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
- const firebaseConfig = {
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+  // Firebase Config
+  const firebaseConfig = {
     apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
     authDomain: "sk12-58e9e.firebaseapp.com",
     databaseURL: "https://sk12-58e9e-default-rtdb.firebaseio.com",
@@ -737,141 +743,205 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
-
-  const form = document.getElementById('vote-form');
-  const submitBtn = document.getElementById('submit');
-  const fullNameInput = document.getElementById('full-name');
-  const voteSelect = document.getElementById('vote-given-to-party');
-  const welcomeMessage = document.getElementById('welcome-message');
-
-  function generatePDF({ fullName, voteGiven, timestamp }) {
+  // PDF Generation function with Election Commission styling
+  function generateAndDownloadPDF({ fullName, email, voteGiven }) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Election Commission watermark
-    doc.setTextColor(150);
+    const now = new Date();
+    const timestamp = now.toLocaleString();
+
+    // Background color (light cream)
+    doc.setFillColor(255, 250, 240);
+    doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F');
+
+    // Watermark (centered, diagonal, large, light gray)
+    doc.setTextColor(200);
     doc.setFontSize(50);
-    doc.text("ELECTION COMMISSION OF INDIA", 105, 150, { align: "center", angle: 45, opacity: 0.1 });
+    doc.setFont("helvetica", "bold");
+    doc.text("ELECTION COMMISSION OF INDIA", doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() / 2, {
+      align: "center",
+      angle: 45,
+      opacity: 0.1,
+    });
 
     // Heading
     doc.setTextColor(0);
-    doc.setFontSize(20);
-    doc.text("Election Commission of India", 105, 20, null, null, "center");
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Election Commission of India", doc.internal.pageSize.getWidth() / 2, 25, { align: "center" });
 
-    // Stamp placeholder
-    doc.setFontSize(12);
-    doc.text("Governor's Stamp and Signature (Official)", 105, 280, null, null, "center");
+    // Extract first name only
+    const firstName = fullName.split(" ")[0];
 
-    // Details
+    // Vote details
     doc.setFontSize(14);
-    doc.text(`Name: ${fullName}`, 20, 50);
-    doc.text(`Voted For: ${voteGiven}`, 20, 60);
-    doc.text(`Date & Time: ${timestamp}`, 20, 70);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Name: ${firstName}`, 20, 50);
+    doc.text(`Email: ${email}`, 20, 60);
+    doc.text(`Voted For: ${voteGiven}`, 20, 70);
+    doc.text(`Date & Time: ${timestamp}`, 20, 80);
 
     // Polite message
     doc.setFontSize(12);
-    doc.text("Thank you for participating in the democratic process.", 20, 90);
+    doc.text("Your vote has been submitted successfully.", 20, 100);
+    doc.text("A confirmation email has been sent to your registered email address.", 20, 110);
 
-    // Email sent message
-    doc.text("A confirmation email has been sent to your registered email.", 20, 100);
+    // Signature line at bottom center
+    doc.setLineWidth(0.5);
+    const sigY = doc.internal.pageSize.getHeight() - 50;
+    const centerX = doc.internal.pageSize.getWidth() / 2;
+    doc.line(centerX - 60, sigY, centerX + 60, sigY); // horizontal line
+    doc.setFontSize(12);
+    doc.text("Governor's Signature & Official Stamp", centerX, sigY + 10, { align: "center" });
 
-    const fileName = `Vote_Receipt_${fullName.replace(/\s+/g, '_')}_${Date.now()}.pdf`;
+    // Save PDF file
+    const fileName = `Vote_Receipt_${firstName}_${now.getTime()}.pdf`;
     doc.save(fileName);
   }
 
-  onAuthStateChanged(auth, user => {
-    if (!user) {
-      // Not logged in, redirect to login page
-      window.location.href = "index.html";
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.forms['contact-form'];
+    const submitButton = document.getElementById('submit');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
+
+    // DELAYED VOTE CHECK — happens only on revisit
+    if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
+      alert("You have already voted. Redirecting to feedback...");
+      window.location.href = "feedback.html";
       return;
     }
 
-    // Fill name and show welcome
-    fullNameInput.value = user.displayName || user.email || "User";
-    welcomeMessage.textContent = `Welcome Dear ${user.displayName || user.email || "User"}`;
+    // Mark page visited once
+    sessionStorage.setItem("visitedOnce", "true");
 
-    // Store email on form dataset for submission
-    form.dataset.userEmail = user.email || "";
-  });
+    onAuthStateChanged(auth, user => {
+      if (user && user.displayName) {
+        document.getElementById("full-name").value = user.displayName;
+        form.dataset.userEmail = user.email;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+        // Show welcome message
+        const welcomeEl = document.getElementById("welcome-message");
+        if (welcomeEl) {
+          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
+        }
+      } else {
+        window.location.replace("index.html");
+      }
+    });
 
-    const fullName = fullNameInput.value.trim();
-    const voteGiven = voteSelect.value.trim();
-    const email = form.dataset.userEmail;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    if (!fullName || !voteGiven) {
-      alert("Please select a party to vote for.");
-      return;
-    }
+      const fullName = document.getElementById('full-name').value.trim();
+      const voteGiven = document.getElementById('vote-given-to-party').value.trim();
+      const email = form.dataset.userEmail || "";
 
-    submitBtn.disabled = true;
-    submitBtn.value = "Submitting...";
-
-    try {
-      const formData = new FormData(form);
-      formData.append('email', email);
-
-      const response = await fetch(scriptURL, {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.result === "duplicate") {
-        alert("You have already voted.");
-        submitBtn.disabled = false;
-        submitBtn.value = "Submit Vote";
+      if (!fullName || !voteGiven) {
+        alert("Please fill in all fields.");
         return;
       }
 
-      if (result.result === "success") {
-        localStorage.setItem("voted", "true");
+      submitButton.disabled = true;
+      submitButton.value = "Submitting...";
 
-        // Generate and download PDF
-        generatePDF({
-          fullName,
-          voteGiven,
-          timestamp: new Date().toLocaleString()
+      try {
+        const formData = new FormData(form);
+        formData.append("email", email);
+
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: formData
         });
 
-        alert("Thank You for Voting! Your vote is submitted successfully.");
+        const result = await response.json();
 
-        // Redirect after delay
-        setTimeout(() => {
-          window.location.href = 'feedback.html';
-        }, 1500);
-      } else {
-        throw new Error(result.message || "Submission failed");
+        if (result.result === "duplicate") {
+          alert("You have already voted.");
+          submitButton.disabled = false;
+          submitButton.value = "Submit";
+          return;
+        }
+
+        if (result.result === "success") {
+          localStorage.setItem("voted", "true");
+
+          // Generate and download PDF receipt
+          generateAndDownloadPDF({ fullName, email, voteGiven });
+
+          alert("Thank You for Voting, Your Vote is Submitted");
+
+          // Redirect after short delay so PDF can start downloading
+          setTimeout(() => {
+            window.location.href = 'feedback.html';
+          }, 1500);
+
+        } else {
+          throw new Error(result.message || "Submission failed");
+        }
+
+      } catch (error) {
+        console.error('Error!', error.message);
+        alert("An error occurred. Please try again.");
+        submitButton.disabled = false;
+        submitButton.value = "Submit";
       }
-    } catch (error) {
-      console.error('Submission error:', error);
-      alert("An error occurred. Please try again.");
-      submitBtn.disabled = false;
-      submitBtn.value = "Submit Vote";
+    });
+  });
+</script>
+
+<script>
+  // Disable right click context menu
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+    console.log('Right-click context menu disabled!');
+  });
+
+  // Disable common DevTools shortcuts
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'F12') {
+      e.preventDefault();
+      console.log('F12 (Developer Tools) disabled!');
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+      e.preventDefault();
+      console.log('Ctrl+Shift+I (Developer Tools) disabled!');
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+      e.preventDefault();
+      console.log('Ctrl+Shift+J (Console) disabled!');
+    }
+    if (e.key === 'F11') {
+      e.preventDefault();
+      console.log('F11 (Fullscreen) disabled!');
     }
   });
 
-  // Disable right-click and some DevTools shortcuts (optional)
-  document.addEventListener('contextmenu', e => e.preventDefault());
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && ['I', 'J'].includes(e.key)) ||
-        e.key === 'F11') {
-      e.preventDefault();
+  // Detect PrintScreen (screenshot attempt)
+  document.addEventListener('keyup', function (e) {
+    if (e.key === 'PrintScreen') {
+      console.log('Screenshot attempt detected!');
+      document.body.style.filter = 'blur(10px)';
+      setTimeout(() => document.body.style.filter = '', 1000);
     }
   });
 
   // Prevent text selection
   document.body.style.userSelect = 'none';
 
+  // Detect DevTools open (some browsers)
+  window.addEventListener('devtoolsopen', function() {
+    alert("Developer Tools are disabled.");
+  });
+
+  setInterval(function() {
+    const devtools = /./;
+    devtools.toString = function() {
+      alert("Developer Tools are disabled.");
+    };
+  }, 1000);
 </script>
 
-    
 
 
 
