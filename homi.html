@@ -720,6 +720,9 @@ window.open("https://web.whatsapp.com/", "_blank");
       window.open("https://x.com/mahavirkumark1", "_blank");
     });
   </script>
+<!-- Add jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
@@ -738,19 +741,42 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+  // PDF Generation function
+  function generateAndDownloadPDF({ fullName, email, voteGiven }) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const now = new Date();
+    const timestamp = now.toLocaleString();
+
+    doc.setFontSize(16);
+    doc.text("Voting Receipt", 105, 20, null, null, "center");
+
+    doc.setFontSize(12);
+    doc.text(`Name: ${fullName}`, 20, 40);
+    doc.text(`Email: ${email}`, 20, 50);
+    doc.text(`Voted For: ${voteGiven}`, 20, 60);
+    doc.text(`Date & Time: ${timestamp}`, 20, 70);
+
+    doc.text("Thank you for participating in the vote.", 20, 90);
+
+    const fileName = `Vote_Receipt_${fullName.replace(/\s+/g, '_')}_${now.getTime()}.pdf`;
+    doc.save(fileName);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.forms['contact-form'];
     const submitButton = document.getElementById('submit');
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
 
-    // 👉 DELAYED VOTE CHECK — happens only on revisit
+    // DELAYED VOTE CHECK — happens only on revisit
     if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
       alert("You have already voted. Redirecting to feedback...");
       window.location.href = "feedback.html";
       return;
     }
 
-    // Mark that this page was visited once
+    // Mark page visited once
     sessionStorage.setItem("visitedOnce", "true");
 
     onAuthStateChanged(auth, user => {
@@ -758,7 +784,7 @@ window.open("https://web.whatsapp.com/", "_blank");
         document.getElementById("full-name").value = user.displayName;
         form.dataset.userEmail = user.email;
 
-        // ✅ Show welcome message
+        // Show welcome message
         const welcomeEl = document.getElementById("welcome-message");
         if (welcomeEl) {
           welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
@@ -803,8 +829,17 @@ window.open("https://web.whatsapp.com/", "_blank");
 
         if (result.result === "success") {
           localStorage.setItem("voted", "true");
+
+          // Generate and download PDF receipt
+          generateAndDownloadPDF({ fullName, email, voteGiven });
+
           alert("Thank You for Voting, Your Vote is Submitted");
-          window.location.href = 'feedback.html';
+
+          // Redirect after short delay so PDF can start downloading
+          setTimeout(() => {
+            window.location.href = 'feedback.html';
+          }, 1500);
+
         } else {
           throw new Error(result.message || "Submission failed");
         }
@@ -819,6 +854,53 @@ window.open("https://web.whatsapp.com/", "_blank");
   });
 </script>
 
+<script>
+  // Your existing code to disable right click, F12, DevTools, etc.
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+    console.log('Right-click context menu disabled!');
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'F12') {
+      e.preventDefault();
+      console.log('F12 (Developer Tools) disabled!');
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+      e.preventDefault();
+      console.log('Ctrl+Shift+I (Developer Tools) disabled!');
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+      e.preventDefault();
+      console.log('Ctrl+Shift+J (Console) disabled!');
+    }
+    if (e.key === 'F11') {
+      e.preventDefault();
+      console.log('F11 (Fullscreen) disabled!');
+    }
+  });
+
+  document.addEventListener('keyup', function (e) {
+    if (e.key === 'PrintScreen') {
+      console.log('Screenshot attempt detected!');
+      document.body.style.filter = 'blur(10px)';
+      setTimeout(() => document.body.style.filter = '', 1000);
+    }
+  });
+
+  document.body.style.userSelect = 'none';
+
+  window.addEventListener('devtoolsopen', function() {
+    alert("Developer Tools are disabled.");
+  });
+
+  setInterval(function() {
+    const devtools = /./;
+    devtools.toString = function() {
+      alert("Developer Tools are disabled.");
+    };
+  }, 1000);
+</script>
 
     
 
