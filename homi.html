@@ -722,14 +722,15 @@ window.open("https://web.whatsapp.com/", "_blank");
   </script>
 <!-- Add jsPDF CDN -->
 <!-- Include jsPDF library -->
-<!-- Add jsPDF CDN -->
+<!-- Add 
+		 <!-- jsPDF Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<!-- Main Secure Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
     authDomain: "sk12-58e9e.firebaseapp.com",
@@ -743,61 +744,38 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // PDF Generation function with Election Commission styling
-  function generateAndDownloadPDF({ fullName, email, voteGiven }) {
+  function generatePDF({ fullName, voteGiven }) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const name = fullName.trim().split(" ")[0];
+    const timestamp = new Date().toLocaleString();
 
-    const now = new Date();
-    const timestamp = now.toLocaleString();
-
-    // Background color (light cream)
-    doc.setFillColor(255, 250, 240);
-    doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F');
-
-    // Watermark (centered, diagonal, large, light gray)
     doc.setTextColor(200);
-    doc.setFontSize(50);
-    doc.setFont("helvetica", "bold");
-    doc.text("ELECTION COMMISSION OF INDIA", doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() / 2, {
-      align: "center",
-      angle: 45,
-      opacity: 0.1,
-    });
-
-    // Heading
+    doc.setFontSize(40);
+    doc.text("ELECTION COMMISSION", 105, 150, { align: "center", angle: 45 });
     doc.setTextColor(0);
-    doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
-    doc.text("Election Commission of India", doc.internal.pageSize.getWidth() / 2, 25, { align: "center" });
 
-    // Extract first name only
-    const firstName = fullName.split(" ")[0];
+    doc.setFontSize(18);
+    doc.text("Election Commission of India", 105, 30, { align: "center" });
 
-    // Vote details
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Name: ${firstName}`, 20, 50);
-    doc.text(`Email: ${email}`, 20, 60);
-    doc.text(`Voted For: ${voteGiven}`, 20, 70);
-    doc.text(`Date & Time: ${timestamp}`, 20, 80);
+    // Load ECI logo
+    const logo = new Image();
+    logo.crossOrigin = "Anonymous";
+    logo.src = "https://upload.wikimedia.org/wikipedia/commons/3/3c/Election_Commission_of_India_logo.png";
 
-    // Polite message
-    doc.setFontSize(12);
-    doc.text("Your vote has been submitted successfully.", 20, 100);
-    doc.text("A confirmation email has been sent to your registered email address.", 20, 110);
+    logo.onload = () => {
+      doc.addImage(logo, "PNG", 80, 35, 50, 20);
 
-    // Signature line at bottom center
-    doc.setLineWidth(0.5);
-    const sigY = doc.internal.pageSize.getHeight() - 50;
-    const centerX = doc.internal.pageSize.getWidth() / 2;
-    doc.line(centerX - 60, sigY, centerX + 60, sigY); // horizontal line
-    doc.setFontSize(12);
-    doc.text("Governor's Signature & Official Stamp", centerX, sigY + 10, { align: "center" });
+      doc.setFontSize(12);
+      doc.text(`Voter Name: ${name}`, 20, 70);
+      doc.text(`Voted For: ${voteGiven}`, 20, 80);
+      doc.text(`Date & Time: ${timestamp}`, 20, 90);
+      doc.text("Vote successfully submitted.", 20, 110);
 
-    // Save PDF file
-    const fileName = `Vote_Receipt_${firstName}_${now.getTime()}.pdf`;
-    doc.save(fileName);
+      doc.text("Signature & Stamp of Chief Officer", 135, 270);
+
+      doc.save(`Voting_Receipt_${name}.pdf`);
+    };
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -805,26 +783,18 @@ window.open("https://web.whatsapp.com/", "_blank");
     const submitButton = document.getElementById('submit');
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
 
-    // DELAYED VOTE CHECK — happens only on revisit
     if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
       alert("You have already voted. Redirecting to feedback...");
       window.location.href = "feedback.html";
       return;
     }
 
-    // Mark page visited once
     sessionStorage.setItem("visitedOnce", "true");
 
     onAuthStateChanged(auth, user => {
       if (user && user.displayName) {
         document.getElementById("full-name").value = user.displayName;
-        form.dataset.userEmail = user.email;
-
-        // Show welcome message
-        const welcomeEl = document.getElementById("welcome-message");
-        if (welcomeEl) {
-          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
-        }
+        document.getElementById("welcome-message").textContent = `Welcome Dear ${user.displayName}`;
       } else {
         window.location.replace("index.html");
       }
@@ -835,7 +805,6 @@ window.open("https://web.whatsapp.com/", "_blank");
 
       const fullName = document.getElementById('full-name').value.trim();
       const voteGiven = document.getElementById('vote-given-to-party').value.trim();
-      const email = form.dataset.userEmail || "";
 
       if (!fullName || !voteGiven) {
         alert("Please fill in all fields.");
@@ -847,13 +816,9 @@ window.open("https://web.whatsapp.com/", "_blank");
 
       try {
         const formData = new FormData(form);
-        formData.append("email", email);
+        formData.append("email", "private");
 
-        const response = await fetch(scriptURL, {
-          method: 'POST',
-          body: formData
-        });
-
+        const response = await fetch(scriptURL, { method: 'POST', body: formData });
         const result = await response.json();
 
         if (result.result === "duplicate") {
@@ -865,24 +830,19 @@ window.open("https://web.whatsapp.com/", "_blank");
 
         if (result.result === "success") {
           localStorage.setItem("voted", "true");
+          generatePDF({ fullName, voteGiven });
+          alert("Thank You for Voting. Receipt downloaded.");
 
-          // Generate and download PDF receipt
-          generateAndDownloadPDF({ fullName, email, voteGiven });
-
-          alert("Thank You for Voting, Your Vote is Submitted");
-
-          // Redirect after short delay so PDF can start downloading
           setTimeout(() => {
             window.location.href = 'feedback.html';
-          }, 1500);
-
+          }, 2000);
         } else {
           throw new Error(result.message || "Submission failed");
         }
 
       } catch (error) {
-        console.error('Error!', error.message);
         alert("An error occurred. Please try again.");
+        console.error(error.message);
         submitButton.disabled = false;
         submitButton.value = "Submit";
       }
@@ -890,57 +850,43 @@ window.open("https://web.whatsapp.com/", "_blank");
   });
 </script>
 
+<!-- Security & Anti-screenshot script (Offline-capable) -->
 <script>
-  // Disable right click context menu
-  document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-    console.log('Right-click context menu disabled!');
-  });
+  document.addEventListener('contextmenu', e => e.preventDefault());
 
-  // Disable common DevTools shortcuts
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'F12') {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
+      (e.ctrlKey && e.key === 'U')
+    ) {
       e.preventDefault();
-      console.log('F12 (Developer Tools) disabled!');
-    }
-    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-      e.preventDefault();
-      console.log('Ctrl+Shift+I (Developer Tools) disabled!');
-    }
-    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-      e.preventDefault();
-      console.log('Ctrl+Shift+J (Console) disabled!');
-    }
-    if (e.key === 'F11') {
-      e.preventDefault();
-      console.log('F11 (Fullscreen) disabled!');
+      alert('Developer Tools are disabled.');
     }
   });
 
-  // Detect PrintScreen (screenshot attempt)
   document.addEventListener('keyup', function (e) {
     if (e.key === 'PrintScreen') {
-      console.log('Screenshot attempt detected!');
-      document.body.style.filter = 'blur(10px)';
+      document.body.style.filter = 'blur(8px)';
       setTimeout(() => document.body.style.filter = '', 1000);
+      alert("Screenshots are not allowed.");
     }
   });
 
-  // Prevent text selection
   document.body.style.userSelect = 'none';
 
-  // Detect DevTools open (some browsers)
-  window.addEventListener('devtoolsopen', function() {
-    alert("Developer Tools are disabled.");
-  });
-
-  setInterval(function() {
-    const devtools = /./;
-    devtools.toString = function() {
-      alert("Developer Tools are disabled.");
-    };
+  setInterval(() => {
+    const element = new Image();
+    Object.defineProperty(element, 'id', {
+      get: function () {
+        alert("Developer Tools are disabled.");
+        throw new Error("DevTools check");
+      }
+    });
+    console.log(element);
   }, 1000);
 </script>
+
 
 
 
