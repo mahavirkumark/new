@@ -723,184 +723,187 @@ window.open("https://web.whatsapp.com/", "_blank");
 <!-- Add jsPDF CDN -->
 <!-- Include jsPDF library -->
 <!-- Add 
-		 <!-- jsPDF Library -->
+<!-- Include jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
-  authDomain: "sk12-58e9e.firebaseapp.com",
-  projectId: "sk12-58e9e",
-  storageBucket: "sk12-58e9e.appspot.com",
-  messagingSenderId: "470207874652",
-  appId: "1:470207874652:web:67ba1cf3629b7e5b144899"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// PDF Generation
-function generateAndDownloadPDF({ fullName, voteGiven }) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  const nameOnly = fullName.split(" ")[0];
-  const now = new Date();
-  const timestamp = now.toLocaleString();
-
-  // Election Commission Logo
-  const logoURL = "https://www.presentations.gov.in/wp-content/uploads/2021/12/eci-logo.png";
-  const signatureURL = "https://cdn.prod.website-files.com/61d7de73eec437f52da6d699/62161cf7328ad280841f653f_esignature-signature.png";
-  const watermarkText = "Election Commission of India";
-
-  // Add logo
-  const addImageToPDF = async (doc, url, x, y, w, h) => {
-    const img = await fetch(url).then(res => res.blob()).then(blob => {
-      return new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-      });
-    });
-    doc.addImage(img, "PNG", x, y, w, h);
+  // Firebase Config - replace with your config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
+    authDomain: "sk12-58e9e.firebaseapp.com",
+    databaseURL: "https://sk12-58e9e-default-rtdb.firebaseio.com",
+    projectId: "sk12-58e9e",
+    storageBucket: "sk12-58e9e.appspot.com",
+    messagingSenderId: "470207874652",
+    appId: "1:470207874652:web:67ba1cf3629b7e5b144899"
   };
 
-  (async () => {
-    await addImageToPDF(doc, logoURL, 10, 10, 30, 30);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    // Watermark
-    doc.setTextColor(150);
-    doc.setFontSize(50);
-    doc.text(watermarkText, 105, 150, { align: "center", angle: 45 });
+  const scriptURL = 'https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec';
 
-    // Main Heading
-    doc.setTextColor(0);
+  // Generate PDF function
+  function generateAndDownloadPDF({ firstName, voteGiven }) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const now = new Date();
+    const timestamp = now.toLocaleString();
+
+    // Draw watermark image (Election Commission Logo) center with transparency
+    const watermarkImgUrl = "https://upload.wikimedia.org/wikipedia/en/3/3a/Election_Commission_of_India_Logo.svg"; // transparent svg/png recommended
+
+    // Draw watermark - large and centered with low opacity
+    doc.setGState(new doc.GState({opacity:0.1}));
+    doc.addImage(watermarkImgUrl, 'PNG', 40, 60, 130, 130); 
+    doc.setGState(new doc.GState({opacity:1}));
+
+    // Draw Election Commission Logo top-left before heading
+    const logoUrl = "https://upload.wikimedia.org/wikipedia/en/3/3a/Election_Commission_of_India_Logo.svg";
+
+    doc.addImage(logoUrl, 'PNG', 85, 10, 40, 30);
+
+    // Heading centered below logo
     doc.setFontSize(18);
-    doc.text("Election Commission of India", 105, 50, { align: "center" });
+    doc.setFont("helvetica", "bold");
+    doc.text("Election Commission of India", 105, 50, null, null, "center");
+
+    // Content
     doc.setFontSize(14);
-    doc.text("Voting Receipt", 105, 65, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.text(`Name: ${firstName}`, 20, 80);
+    doc.text(`Voted For: ${voteGiven}`, 20, 90);
+    doc.text(`Date & Time: ${timestamp}`, 20, 100);
 
-    // Voting Details
+    // Official Signature image bottom right
+    const signatureUrl = "https://cdn.prod.website-files.com/61d7de73eec437f52da6d699/62161cf7328ad280841f653f_esignature-signature.png";
+    doc.addImage(signatureUrl, 'PNG', 140, 120, 50, 20);
+
+    // Signature text
+    doc.setFontSize(10);
+    doc.text("Returning Officer", 145, 145);
+
+    // Footer message centered bottom
     doc.setFontSize(12);
-    doc.text(`Name: ${nameOnly}`, 20, 90);
-    doc.text(`Voted For: ${voteGiven}`, 20, 100);
-    doc.text(`Date & Time: ${timestamp}`, 20, 110);
-    doc.text("Thank you for casting your vote.", 20, 125);
+    doc.text("Thank you for participating in the vote.", 105, 160, null, null, "center");
+    doc.text("Your vote has been successfully submitted.", 105, 170, null, null, "center");
 
-    // Signature & stamp
-    await addImageToPDF(doc, signatureURL, 130, 140, 50, 20);
-    doc.text("Authorized Signatory", 140, 165);
-
-    const fileName = `Vote_Receipt_${nameOnly}_${now.getTime()}.pdf`;
+    // Save PDF
+    const fileName = `Vote_Receipt_${firstName}_${now.getTime()}.pdf`;
     doc.save(fileName);
-  })();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.forms['contact-form'];
-  const submitButton = document.getElementById('submit');
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
-
-  if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
-    alert("You have already voted. Redirecting to feedback...");
-    window.location.href = "feedback.html";
-    return;
   }
 
-  sessionStorage.setItem("visitedOnce", "true");
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.forms['contact-form'];
+    const submitButton = document.getElementById('submit');
 
-  onAuthStateChanged(auth, user => {
-    if (user && user.displayName) {
-      const firstName = user.displayName.split(" ")[0];
-      document.getElementById("full-name").value = firstName;
-      form.dataset.userEmail = user.email;
-
-      const welcomeEl = document.getElementById("welcome-message");
-      if (welcomeEl) {
-        welcomeEl.textContent = `Welcome Dear ${firstName}`;
-      }
-    } else {
-      window.location.replace("index.html");
-    }
-  });
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const fullName = document.getElementById('full-name').value.trim();
-    const voteGiven = document.getElementById('vote-given-to-party').value.trim();
-
-    if (!fullName || !voteGiven) {
-      alert("Please fill in all fields.");
+    // Prevent multiple voting
+    if (localStorage.getItem("voted") === "true") {
+      alert("You have already voted.");
+      window.location.href = "feedback.html";
       return;
     }
 
-    submitButton.disabled = true;
-    submitButton.value = "Submitting...";
+    // Firebase auth state check
+    onAuthStateChanged(auth, user => {
+      if (user && user.displayName) {
+        const firstName = user.displayName.split(' ')[0];
+        document.getElementById("full-name").value = user.displayName;
+        form.dataset.userEmail = user.email;
 
-    try {
-      const formData = new FormData(form);
-      formData.append("email", form.dataset.userEmail || "");
+        const welcomeEl = document.getElementById("welcome-message");
+        if (welcomeEl) {
+          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
+        }
+      } else {
+        // Not logged in
+        window.location.replace("index.html");
+      }
+    });
 
-      const response = await fetch(scriptURL, {
-        method: 'POST',
-        body: formData
-      });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-      const result = await response.json();
+      const fullName = document.getElementById('full-name').value.trim();
+      const firstName = fullName.split(' ')[0];
+      const voteGiven = document.getElementById('vote-given-to-party').value.trim();
 
-      if (result.result === "duplicate") {
-        alert("You have already voted.");
-        submitButton.disabled = false;
-        submitButton.value = "Submit";
+      if (!fullName || !voteGiven) {
+        alert("Please fill in all fields.");
         return;
       }
 
-      if (result.result === "success") {
-        localStorage.setItem("voted", "true");
-        generateAndDownloadPDF({ fullName, voteGiven });
+      submitButton.disabled = true;
+      submitButton.value = "Submitting...";
 
-        alert("Your vote has been submitted. A receipt is downloading...");
-        setTimeout(() => window.location.href = 'feedback.html', 2000);
-      } else {
-        throw new Error(result.message || "Submission failed");
+      try {
+        const formData = new FormData(form);
+        formData.append("email", form.dataset.userEmail || "");
+
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.result === "duplicate") {
+          alert("You have already voted.");
+          submitButton.disabled = false;
+          submitButton.value = "Submit";
+          return;
+        }
+
+        if (result.result === "success") {
+          localStorage.setItem("voted", "true");
+
+          // Generate and download PDF
+          generateAndDownloadPDF({ firstName, voteGiven });
+
+          alert("Thank You for Voting, Your Vote is Submitted");
+
+          setTimeout(() => {
+            window.location.href = 'feedback.html';
+          }, 1500);
+        } else {
+          throw new Error(result.message || "Submission failed");
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        alert("An error occurred. Please try again.");
+        submitButton.disabled = false;
+        submitButton.value = "Submit";
       }
+    });
+  });
+</script>
 
-    } catch (error) {
-      console.error('Error!', error.message);
-      alert("An error occurred. Please try again.");
-      submitButton.disabled = false;
-      submitButton.value = "Submit";
+<script>
+  // Disable right-click, F12, devtools shortcuts, screenshot, selection, etc.
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || 
+        e.key === 'F11') {
+      e.preventDefault();
     }
   });
-});
 
-// 💡 Security Features
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (
-    e.key === 'F12' ||
-    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-    e.key === 'F11'
-  ) {
-    e.preventDefault();
-  }
-});
-document.addEventListener('keyup', e => {
-  if (e.key === 'PrintScreen') {
-    document.body.style.filter = 'blur(10px)';
-    setTimeout(() => document.body.style.filter = '', 1000);
-  }
-});
-document.body.style.userSelect = 'none';
-setInterval(() => {
-  const devtools = /./;
-  devtools.toString = function () {
-    alert("Developer Tools are disabled.");
-  };
-}, 1000);
+  document.body.style.userSelect = 'none';
+
+  document.addEventListener('keyup', e => {
+    if (e.key === 'PrintScreen') {
+      document.body.style.filter = 'blur(10px)';
+      setTimeout(() => document.body.style.filter = '', 1500);
+    }
+  });
 </script>
+
 
 
 
