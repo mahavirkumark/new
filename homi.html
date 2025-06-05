@@ -721,13 +721,14 @@ window.open("https://web.whatsapp.com/", "_blank");
     });
   </script>
 <!-- Add jsPDF CDN -->
+<!-- Include jsPDF library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  // Firebase Config
+  // Your Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
     authDomain: "sk12-58e9e.firebaseapp.com",
@@ -741,55 +742,13 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // PDF Generation function
-  function generateAndDownloadPDF({ fullName, email, voteGiven }) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const now = new Date();
-    const timestamp = now.toLocaleString();
-
-    doc.setFontSize(16);
-    doc.text("Voting Receipt", 105, 20, null, null, "center");
-
-    doc.setFontSize(12);
-    doc.text(`Name: ${fullName}`, 20, 40);
-    doc.text(`Email: ${email}`, 20, 50);
-    doc.text(`Voted For: ${voteGiven}`, 20, 60);
-    doc.text(`Date & Time: ${timestamp}`, 20, 70);
-
-    doc.text("Thank you for participating in the vote.", 20, 90);
-
-    const fileName = `Vote_Receipt_${fullName.replace(/\s+/g, '_')}_${now.getTime()}.pdf`;
-    doc.save(fileName);
-  }
-
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.forms['contact-form'];
     const submitButton = document.getElementById('submit');
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
-
-    // DELAYED VOTE CHECK — happens only on revisit
-    if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
-      alert("You have already voted. Redirecting to feedback...");
-      window.location.href = "feedback.html";
-      return;
-    }
-
-    // Mark page visited once
-    sessionStorage.setItem("visitedOnce", "true");
+    const scriptURL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';  // Replace with your actual Apps Script URL
 
     onAuthStateChanged(auth, user => {
-      if (user && user.displayName) {
-        document.getElementById("full-name").value = user.displayName;
-        form.dataset.userEmail = user.email;
-
-        // Show welcome message
-        const welcomeEl = document.getElementById("welcome-message");
-        if (welcomeEl) {
-          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
-        }
-      } else {
+      if (!user) {
         window.location.replace("index.html");
       }
     });
@@ -797,12 +756,10 @@ window.open("https://web.whatsapp.com/", "_blank");
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const fullName = document.getElementById('full-name').value.trim();
       const voteGiven = document.getElementById('vote-given-to-party').value.trim();
-      const email = form.dataset.userEmail || "";
 
-      if (!fullName || !voteGiven) {
-        alert("Please fill in all fields.");
+      if (!voteGiven) {
+        alert("Please select a party to vote for.");
         return;
       }
 
@@ -810,9 +767,10 @@ window.open("https://web.whatsapp.com/", "_blank");
       submitButton.value = "Submitting...";
 
       try {
-        const formData = new FormData(form);
-        formData.append("email", email);
+        const formData = new FormData();
+        formData.append("voteGiven", voteGiven);
 
+        // Send vote to backend
         const response = await fetch(scriptURL, {
           method: 'POST',
           body: formData
@@ -828,22 +786,18 @@ window.open("https://web.whatsapp.com/", "_blank");
         }
 
         if (result.result === "success") {
-          localStorage.setItem("voted", "true");
-
           // Generate and download PDF receipt
-          generateAndDownloadPDF({ fullName, email, voteGiven });
+          generateAndDownloadPDF({
+            voteReceiptId: result.voteReceiptId,
+            voteGiven,
+            timestamp: result.timestamp
+          });
 
-          alert("Thank You for Voting, Your Vote is Submitted");
-
-          // Redirect after short delay so PDF can start downloading
-          setTimeout(() => {
-            window.location.href = 'feedback.html';
-          }, 1500);
-
+          alert("Thank you for voting! Your receipt has been downloaded.");
+          window.location.href = 'feedback.html';
         } else {
           throw new Error(result.message || "Submission failed");
         }
-
       } catch (error) {
         console.error('Error!', error.message);
         alert("An error occurred. Please try again.");
@@ -852,55 +806,62 @@ window.open("https://web.whatsapp.com/", "_blank");
       }
     });
   });
+
+  // PDF generation function with watermark & polite message
+  function generateAndDownloadPDF({ voteReceiptId, voteGiven, timestamp }) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Background color
+    doc.setFillColor(245, 245, 245);
+    doc.rect(10, 10, 190, 270, 'F');
+
+    // Watermark
+    doc.setFontSize(60);
+    doc.setTextColor(200, 200, 200); // Light gray
+    doc.setFont('helvetica', 'bold');
+    doc.text("Election Commission of India", 105, 150, null, null, "center", 45);
+
+    // Header
+    doc.setTextColor(0, 51, 102);
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'normal');
+    doc.text("Election Commission of India", 105, 30, null, null, "center");
+
+    // Line under header
+    doc.setDrawColor(0, 51, 102);
+    doc.setLineWidth(0.8);
+    doc.line(20, 35, 190, 35);
+
+    // Receipt details
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Receipt ID: ${voteReceiptId}`, 20, 60);
+    doc.text(`Voted For: ${voteGiven}`, 20, 75);
+    doc.text(`Date & Time: ${timestamp}`, 20, 90);
+
+    // Email notification message
+    doc.setFontSize(12);
+    doc.setTextColor(0, 102, 51);
+    doc.text("An email has been sent to your personal mail.", 20, 110);
+
+    // Governor's signature placeholder
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text("_____________________________", 130, 200);
+    doc.text("Governor's Signature & Stamp", 130, 210);
+
+    // Polite thank you note
+    doc.setFontSize(12);
+    doc.setTextColor(0, 102, 51);
+    doc.text("Thank you for exercising your democratic right.", 105, 250, null, null, "center");
+
+    // Save the PDF with a dynamic file name
+    const fileName = `Vote_Receipt_${voteReceiptId}.pdf`;
+    doc.save(fileName);
+  }
 </script>
 
-<script>
-  // Your existing code to disable right click, F12, DevTools, etc.
-  document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-    console.log('Right-click context menu disabled!');
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'F12') {
-      e.preventDefault();
-      console.log('F12 (Developer Tools) disabled!');
-    }
-    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-      e.preventDefault();
-      console.log('Ctrl+Shift+I (Developer Tools) disabled!');
-    }
-    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-      e.preventDefault();
-      console.log('Ctrl+Shift+J (Console) disabled!');
-    }
-    if (e.key === 'F11') {
-      e.preventDefault();
-      console.log('F11 (Fullscreen) disabled!');
-    }
-  });
-
-  document.addEventListener('keyup', function (e) {
-    if (e.key === 'PrintScreen') {
-      console.log('Screenshot attempt detected!');
-      document.body.style.filter = 'blur(10px)';
-      setTimeout(() => document.body.style.filter = '', 1000);
-    }
-  });
-
-  document.body.style.userSelect = 'none';
-
-  window.addEventListener('devtoolsopen', function() {
-    alert("Developer Tools are disabled.");
-  });
-
-  setInterval(function() {
-    const devtools = /./;
-    devtools.toString = function() {
-      alert("Developer Tools are disabled.");
-    };
-  }, 1000);
-</script>
 
     
 
