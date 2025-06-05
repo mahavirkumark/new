@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Blockchain Voting System</title>
+</head>
+<body>
+      <script type="module" src="admin.js"></script>
+      <nav class="navbar">
+     
+    
+        <div class="logo">
+           <h1> <p>Blockchain Voting System</h1>
+           </div>
+
+        <ul class="nav-links">
+         
+            <li><a href="index.html" class="nav-item" onclick="setActive(this)">Home</a></li>
+ 
+            <li><a href="sign.html" class="nav-item" onclick="setActive(this)">Login</a></li>
+            <li><a href="j.html" class="nav-item" onclick="setActive(this)">Admin</a></li>
+        </ul>
+        <div class="search-bar">
+            <input type="text" placeholder="Type here..." id="search-input">
+            <button onclick="searchFunction()">Search</button>
+        </div>
+        <div class="menu-toggle" onclick="toggleMenu()">&#9776;</div>
+    </nav>
+
+        <h1>Admin - Verify New Users</h1>
+    <div id="userList" class="user-list">
+    </div>
+        <style>
+            body{ margin:0px;
+                padding:0px;
+
+            }
+        .user-list {
+            margin-top: 20px;
+        }
+        .user-item {
+            margin-bottom: 10px;
+        }
+        .done-btn {
+            margin-left: 10px;
+            cursor: pointer;
+            color: green;
+        }
+             body {
+            font-family: Arial, sans-serif;
+           background:linear-gradient(to right, #e2e2e2, #c9d6ff);
+            
+            
+        }
+          .footer {
+            background-color: black;
+            color: #fff;
+            padding: 20px;
+            
+            font-size: 14px;
+     margin-left: 0px;
+            bottom: 0;
+            width: 1470px;
+        
+        }
+        .footer-content {
+            max-width: 2000px;
+          text-align: center;
+            margin-left: 0px;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+         .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        background-color:#121262 ;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            padding: 0;
+            margin: 0;
+            font-size: large;
+        }
+
+        .nav-links li {
+            display: inline;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+   
+        ul li:hover a{
+   
+   align-items:center ;
+   border-color: white;
+}
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            padding: 5px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .search-bar button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #4682b4;
+            color: #ffffff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #315f72;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ffffff;
+        }
+            </style>
+<footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Blockchain Voting System. All rights reserved.</p>
+            <div class="social-media">
+               
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        function searchFunction() {
+            const query = document.getElementById('search-input').value;
+            alert("Search feature not implemented yet. Query: " + query);
+        }
+ 
+    </script>
+    <script>
+  
+  document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+  console.log('Right-click context menu disabled!');
+});
+
+// Disable F12, Ctrl+Shift+I, and other DevTools shortcuts
+document.addEventListener('keydown', function (e) {
+  // Disable F12 (Developer Tools)
+  if (e.key === 'F12') {
+    e.preventDefault();
+    console.log('F12 (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+I (Developer Tools)
+  if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+I (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+J (Console) disabled!');
+  }
+  // Disable F11 (Fullscreen mode which sometimes triggers DevTools)
+  if (e.key === 'F11') {
+    e.preventDefault();
+    console.log('F11 (Fullscreen) disabled!');
+  }
+});
+
+// Detect and block PrintScreen (screenshot attempt)
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'PrintScreen') {
+    console.log('Screenshot attempt detected!');
+    document.body.style.filter = 'blur(10px)';
+    setTimeout(() => document.body.style.filter = '', 1000);  // Unblur after 1 second
+  }
+});
+
+// Prevent text selection (optional, if you want to stop users from copying text)
+document.body.style.userSelect = 'none';
+
+// Block the opening of Developer Tools from right-clicking the page (inspect)
+window.addEventListener('devtoolsopen', function() {
+  alert("Developer Tools are disabled.");
+});
+
+// Check if the DevTools is open (this works on some browsers)
+setInterval(function() {
+  const devtools = /./;
+  devtools.toString = function() {
+    alert("Developer Tools are disabled.");
+  };
+}, 1000);
+        </script>
+          
+</body>
+</html>

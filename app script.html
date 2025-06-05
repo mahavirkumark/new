@@ -1,0 +1,78 @@
+const sheetName = 'Sheet1';
+const scriptProp = PropertiesService.getScriptProperties();
+
+// Run once to store the spreadsheet ID
+function initialSetup() {
+  const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  scriptProp.setProperty('key', activeSpreadsheet.getId());
+}
+
+// Handles form POST requests
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.tryLock(10000); // wait up to 10s for the lock
+
+  try {
+    const doc = SpreadsheetApp.openById(scriptProp.getProperty('key'));
+    const sheet = doc.getSheetByName(sheetName);
+    if (!sheet) throw new Error("Sheet not found: " + sheetName);
+
+    const formData = e.parameter;
+    const fullName = formData['full-name']?.trim() || "No Name";
+    const voteParty = formData['vote-given-to-party']?.trim() || "No Vote";
+
+    // ISO 8601 formatted timestamp with script's timezone
+    const timestamp = new Date().toISOString();
+
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const nextRow = sheet.getLastRow() + 1;
+
+    const newRow = headers.map(header => {
+      const normalized = header.toLowerCase().trim();
+      if (normalized === "Timestamp") return Timestamp;
+      if (normalized === "full-name") return fullName;
+      if (normalized === "vote-given-to-party") return voteParty;
+      return "";
+    });
+
+    sheet.getRange(nextRow, 1, 1, newRow.length).setValues([newRow]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'success', row: nextRow }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'error', message: error.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Handles GET requests for frontend
+function doGet() {
+  try {
+    const doc = SpreadsheetApp.openById(scriptProp.getProperty('key'));
+    const sheet = doc.getSheetByName(sheetName);
+    const rows = sheet.getDataRange().getValues();
+    const headers = rows.shift(); // remove header row
+
+    const jsonData = rows.map(row => {
+      const obj = {};
+      headers.forEach((header, index) => {
+        obj[header.trim()] = row[index];
+      });
+      return obj;
+    });
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ data: jsonData }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: true, message: error.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}

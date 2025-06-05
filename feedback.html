@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Voting Feedback Form</title>
+    <style>
+  
+           body {
+         
+    background-image: url('pink.png'); /* Path to your image */
+    background-size: cover; /* Ensures the image covers the entire area */
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0; /* Removes default margin */
+    padding: 0; /* Removes default padding */
+    width: 100%; /* Full width of the viewport */
+    height: 100vh; /* Full height of the viewport */
+    overflow: hidden; /* Prevents unwanted scrolling */
+        }
+
+        .container {
+               
+      background:pink;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-height: 600px;
+            margin-top: 50px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 5px;
+            display: block;
+            color: #555;
+        }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+  .footer {
+            background-color:black;
+            color: #fff;
+            padding: 20px;
+            margin-top:200px ;
+            font-size: 14px;
+margin-left: -20px;
+            bottom: 0;
+            width: 1580px;
+        
+        }
+        .footer-content {
+            max-width: 2000px;
+          text-align: center;
+            margin-left: 0px;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+    </style>
+    <script>
+        // Disable back navigation
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+      </script>
+      <script>
+        window.onload = function () {
+            history.replaceState(null, null, location.href);
+        };
+      </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Blockchain  Voting Feedback Form</h2>
+        <form action="https://script.google.com/macros/s/AKfycbzwncHtcd-cCtofSSxCAopSO5MlSWbPzPna3sIeT5LpVpMByYW2p4aXqwQ2extYFwBM/exec" method="post" onsubmit="return handleFormSubmit(event)">
+            <!-- 1. Reason for Candidate -->
+             <label for="name">Your Name:</label>
+    <input type="text" id="name" name="Name" placeholder="Enter your name"  readonly required>
+            <label for="reason">Why Did You Vote for Your Selected Candidate?</label>
+            <textarea id="reason" name="Reason for Candidate" rows="4" placeholder="Enter your reason here..." required></textarea>
+
+            <!-- 2. Web Experience -->
+            <label for="Web Experience">How Was Your Web Experience?</label>
+            <select id="web-experience" name="Web Experience" required>
+                <option value="">-- Select an option --</option>
+                <option value="Excellent">Excellent</option>
+                <option value="Good">Good</option>
+                <option value="Average">Average</option>
+                <option value="Poor">Poor</option>
+            </select>
+
+    
+            <!-- Submit Button -->
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+ <div>
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Blockchain Voting System. All rights reserved.</p>
+            <div class="social-media">
+               
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</div>
+    <!-- JavaScript to Redirect to index.html -->
+    <script>
+        function handleFormSubmit(event) {
+            // Allow form submission to send data first, then redirect
+            setTimeout(function () {
+                window.location.href = 'index.html';
+            }, 500); // Wait 500ms before redirecting
+            return true;
+        }
+    </script>
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("Page Loaded");  // Debugging step
+
+    const nameField = document.getElementById("name");
+
+    if (!nameField) {
+        console.error("Name input field not found!");
+        return;
+    }
+
+    const storedName = localStorage.getItem("userName");
+    console.log("Fetched Name from Storage:", storedName); // Debugging step
+
+    if (storedName) {
+        nameField.value = storedName;  // Auto-fill name
+    } else {
+        nameField.value = "Not Logged In"; // Fallback in case of missing data
+    }
+});
+</script>
+<script>
+    // Disable back and forward navigation
+    window.history.pushState(null, "", window.location.href);
+    
+    window.addEventListener('popstate', function (event) {
+        window.history.pushState(null, "", window.location.href);
+    });
+    
+    </script>
+
+
+  <!-- Prevent copying, DevTools, right-click -->
+  <script>
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    document.addEventListener('keydown', e => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
+        (e.ctrlKey && e.key === 'U')
+      ) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('keyup', e => {
+      if (e.key === 'PrintScreen') {
+        document.body.style.filter = 'blur(10px)';
+        setTimeout(() => document.body.style.filter = '', 1000);
+      }
+    });
+
+    document.body.style.userSelect = 'none';
+  </script>
+
+</body>
+</html>

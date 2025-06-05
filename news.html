@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest News</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, blueviolet, skyblue, pink);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        h3 {
+            color: #444;
+            padding-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 20px 0;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        li img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            max-width: 300px;
+            max-height: 200px;
+        }
+
+        li a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        li a:hover {
+            text-decoration: underline;
+        }
+
+        .news-content {
+            margin-top: 10px;
+        }
+
+        .news-meta {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .news-meta small {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Latest News</h2>
+  
+    <div>
+     
+ 
+    
+    <div>
+        
+        <ul id="news-list-newsdata"></ul>
+    </div>
+    <div>
+    
+        <ul id="news-list-gnews"></ul>
+    </div>
+</div>
+
+<script>
+    // API Keys
+
+    const apiKeyNewsData = "pub_677646a653536356a509177bed9f1352fff4f";  // NewsData.io API key
+    const apiKeyGNews = "547b591649423a5328766c3bfadd7dc7";  // GNews API key
+
+
+
+    // NewsData.io API URL
+    const urlNewsData = `https://newsdata.io/api/1/news?apikey=${apiKeyNewsData}&country=in&category=top`;
+
+    // GNews API URL
+    const urlGNews = `https://gnews.io/api/v4/top-headlines?token=${apiKeyGNews}&lang=en&country=in`;
+
+    // Fetch and display news from Mediastack
+    async function fetchMediastackNews() {
+        try {
+            const response = await fetch(urlMediastack);
+            const data = await response.json();
+            console.log("Mediastack Response:", data);  // Log the full response
+
+            const newsList = document.getElementById('news-list-mediastack');
+            newsList.innerHTML = "";  // Clear old news
+
+            if (data.data && data.data.length > 0) {
+                data.data.forEach(article => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        ${article.image ? `<img src="${article.image}" alt="Image">` : ''}
+                        <div class="news-content">
+                            <strong>${article.source}</strong>: 
+                            <a href="${article.url}" target="_blank">${article.title}</a>
+                            <p>${article.description || 'No description available.'}</p>
+                        </div>
+                        <div class="news-meta">
+                            <small>Published on: ${article.published_at}</small>
+                            <small>Source: ${article.source}</small>
+                        </div>
+                    `;
+                    newsList.appendChild(li);
+                });
+            } else {
+                newsList.innerHTML = "<li>No news found from Mediastack. Check the API response.</li>";
+            }
+        } catch (error) {
+            console.error("Error fetching Mediastack news:", error);
+            document.getElementById('news-list-mediastack').innerHTML = "<li>Failed to load Mediastack news.</li>";
+        }
+    }
+
+    // Fetch and display news from NewsData.io
+    async function fetchNewsDataNews() {
+        try {
+            const response = await fetch(urlNewsData);
+            const data = await response.json();
+            console.log("NewsData.io Response:", data);  // Log the full response
+
+            const newsList = document.getElementById('news-list-newsdata');
+            newsList.innerHTML = "";  // Clear old news
+
+            if (data.results && data.results.length > 0) {
+                data.results.forEach(article => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        ${article.image_url ? `<img src="${article.image_url}" alt="Image">` : ''}
+                        <div class="news-content">
+                            <strong>${article.source_id}</strong>: 
+                            <a href="${article.url}" target="_blank">${article.title}</a>
+                            <p>${article.description || 'No description available.'}</p>
+                        </div>
+                        <div class="news-meta">
+                            <small>Published on: ${article.pubDate}</small>
+                            <small>Source: ${article.source_id}</small>
+                        </div>
+                    `;
+                    newsList.appendChild(li);
+                });
+            } else {
+                newsList.innerHTML = "<li>No news found from NewsData.io. Check the API response.</li>";
+            }
+        } catch (error) {
+            console.error("Error fetching NewsData.io news:", error);
+            document.getElementById('news-list-newsdata').innerHTML = "<li>Failed to load NewsData.io news.</li>";
+        }
+    }
+
+    // Fetch and display news from GNews
+    async function fetchGNews() {
+        try {
+            const response = await fetch(urlGNews);
+            const data = await response.json();
+            console.log("GNews Response:", data);  // Log the full response
+
+            const newsList = document.getElementById('news-list-gnews');
+            newsList.innerHTML = "";  // Clear old news
+
+            if (data.articles && data.articles.length > 0) {
+                data.articles.forEach(article => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        ${article.image ? `<img src="${article.image}" alt="Image">` : ''}
+                        <div class="news-content">
+                            <strong>${article.source.name}</strong>: 
+                            <a href="${article.url}" target="_blank">${article.title}</a>
+                            <p>${article.description || 'No description available.'}</p>
+                        </div>
+                        <div class="news-meta">
+                            <small>Published on: ${article.publishedAt}</small>
+                            <small>Source: ${article.source.name}</small>
+                        </div>
+                    `;
+                    newsList.appendChild(li);
+                });
+            } else {
+                newsList.innerHTML = "<li>No news found from GNews. Check the API response.</li>";
+            }
+        } catch (error) {
+            console.error("Error fetching GNews:", error);
+            document.getElementById('news-list-gnews').innerHTML = "<li>Failed to load GNews.</li>";
+        }
+    }
+
+    // Call the functions to fetch and display news from all sources
+    fetchMediastackNews();
+    fetchNewsDataNews();
+    fetchGNews();
+</script>
+<script>
+  
+  document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+  console.log('Right-click context menu disabled!');
+});
+
+// Disable F12, Ctrl+Shift+I, and other DevTools shortcuts
+document.addEventListener('keydown', function (e) {
+  // Disable F12 (Developer Tools)
+  if (e.key === 'F12') {
+    e.preventDefault();
+    console.log('F12 (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+I (Developer Tools)
+  if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+I (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+J (Console) disabled!');
+  }
+  // Disable F11 (Fullscreen mode which sometimes triggers DevTools)
+  if (e.key === 'F11') {
+    e.preventDefault();
+    console.log('F11 (Fullscreen) disabled!');
+  }
+});
+
+// Detect and block PrintScreen (screenshot attempt)
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'PrintScreen') {
+    console.log('Screenshot attempt detected!');
+    document.body.style.filter = 'blur(10px)';
+    setTimeout(() => document.body.style.filter = '', 1000);  // Unblur after 1 second
+  }
+});
+
+// Prevent text selection (optional, if you want to stop users from copying text)
+document.body.style.userSelect = 'none';
+
+// Block the opening of Developer Tools from right-clicking the page (inspect)
+window.addEventListener('devtoolsopen', function() {
+  alert("Developer Tools are disabled.");
+});
+
+// Check if the DevTools is open (this works on some browsers)
+setInterval(function() {
+  const devtools = /./;
+  devtools.toString = function() {
+    alert("Developer Tools are disabled.");
+  };
+}, 1000);
+    </script>
+      
+</body>
+</html>

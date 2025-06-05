@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Voting System</title>
+    <script type="module" src="firebaseauth1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+         <script type="module" src="admin.js"></script>
+             <script type="module" src="script.js"></script>
+    <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, violet, pink);
+        color: #333;
+    }
+    
+
+        .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+  background-color:#121262 ;
+        position: relative;
+        height: 50px;
+        
+      
+    }
+    
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+      margin-right: 200px;
+      
+
+   
+    }
+    @keyframes c{
+        from{left:900px}
+        to{ left:0px}
+
+        }
+    
+    
+    .nav-links li {
+        display: inline;
+       
+    }
+    
+    .nav-item {
+        text-decoration: none;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 5px 10px;
+
+        transition: background-color 0.3s;
+        font-size: larger;
+             animation-name: c;
+        animation-delay: 0ms;
+        animation-duration: 3s;
+        animation: iteration count 1px;;
+        position: relative;
+        border: 1px solid transparent;
+    }
+
+    ul li:hover a{
+   
+        align-items:center ;
+        border-color: white;
+}
+
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+
+.box-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   
+}
+
+.box {
+    
+
+    width: calc(33.33% - 20px);
+    background-color: #f7f7f7;
+    padding: 10px;
+    margin: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px ;
+    height:400px;
+    width: 800px;
+ 
+    border: 10px solid white; /* Red border */
+   
+    border-top-color: #0000ff; /* Blue top border */
+    border-style: solid;
+    border-width: 2px;
+    background-color:skyblue;
+}
+
+
+
+.box-image {
+    width: 50px;
+    height: 5px;
+    margin: 0 auto;
+    object-fit: cover;
+  
+}
+
+.box h3 {
+    font-weight: bold;
+    margin-bottom: 10px;
+ 
+}
+
+.box p {
+    font-size: 16px;
+    color: #666;
+}
+
+.medium-box {
+    background-color: #f7f7f7;
+    padding: 30px;
+    margin: 30px 0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #007bff;
+}
+
+.medium-box h2 {
+    font-weight: bold;
+    margin-bottom: 20px;
+    background-color: #007bff;
+}
+
+.medium-box p {
+    font-size: 18px;
+    background-color: #007bff;
+}
+
+
+
+
+.box1 {
+  width: 1520px;
+  height:950px;
+  margin-top: 0px;
+  border: 1px solid #ddd;
+  margin-left: 0px;
+image-orientation: initial; fit
+}
+
+.box1 img {
+   width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+}
+
+ .logo{
+    font-size: 20px;
+  text-decoration: none;
+        color: #ffffff;
+        font-weight: bold;
+        display: flex;
+ }
+p{ line-height: 0;
+    font-size: 25px;
+        animation-name: cv;
+    animation-duration: 3s;
+    animation-delay: 0ms;
+    animation-iteration-count:1;
+    position: relative;
+    margin-top: 20px;
+    margin-right: 100px;
+ }
+
+ .fa-brands{
+    margin-right: 3px;
+    
+    font-size: 25px;
+ 
+ }
+ .c{ padding: 5px;
+   
+    border: 2x solid transparent;
+
+ }
+ 
+.fa-hive{
+    font-size: 25px;
+    margin-top: 8px;
+}
+.l{
+    border:2px solid transparent;}
+h2{
+align-items:center ;
+justify-content: center;
+display: flex;
+margin-top: -1px;
+}
+
+.fa-users{
+  margin-top: 7px;
+  padding: 2px;
+  font-size: 20px;
+}
+@keyframes cv{
+    from{font-size:0px;}
+    to{ font-size:25px}
+    }
+    .fa-users{
+  margin-top: 7px;
+  padding: 2px;
+  font-size: 20px;
+}
+ </style>
+
+    <script src="script.js"></script>
+
+  
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-users"></i>
+            <p> Blockchain Voting System</p>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="u.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-square-poll-vertical"></i> Voting Result</a></li>
+            <li><a href="candidate.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-person"></i> Candidate</a></li>
+            <li><a href="news.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-newspaper"></i> News</a></li>
+            <li><a href="j.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-lock"></i> Admin Panel</a></li>
+        </ul>
+    </nav>
+       
+    </nav>
+    <p><h2>Candidate List</h2></p>
+    <div class="pk">
+   <div class="p">
+    <div class="pp"><img src="image1.png"></div>
+    <div class="pp"><img src="image2.png"></div>
+    <div class="pp"><img src="image3.png"></div>
+    <div class="pp"><img src="image4.jpeg"></div>
+    <div class="pp"><img src="image5.png"></div>
+</div>
+<div class="pc">
+    <div class="pp"><img src="d.jpg"></div>
+    <div class="pp"><img src="e.jpg"></div>
+    <div class="pp"><img src="g.jpg"></div>
+    <div class="pp"><img src="a.jpg"></div>
+    <div class="pp"><img src="b.jpg"></div>
+    
+</div>
+<div class="pos">
+
+<h4>
+          Nitin Pandey, as a BJP candidate, would likely emphasize the party’s vision of national development, with a particular focus on economic reforms and creating jobs. He might advocate for Make in India, Digital India, and other initiatives that foster 
+          technological and industrial growth. iven the BJP’s affiliation with the Hindutva ideology, Nitin Pandey might align with issues concerning the preservation of Indian culture and values, promoting policies around religious freedom, and cultural nationalism. He could emphasize the importance of unity in diversity while promoting a strong national identity.Depending on his constituency.  </h4>
+          
+    <h4>Ajay Kamble would likely advocate for the secularism that the Congress party champions, promoting harmony between different religious communities in India and working toward social justice for all sections of society. As a Congress leader, Kamble would likely focus on welfare programs, such as poverty alleviation, healthcare, education, and job creation. He might push for reforms aimed at addressing issues like unemployment and rural development.
+
+<br><br><br>
+    </h4>
+  
+     <h4>    Veer Kale a Shivsena Candidate would likely focus heavily on Hindutva and promoting the party's commitment to Marathi pride  culture. He would  advocate for policies that resonate with the party’s core ideological values, aiming to represent the interests of the Hindu community in his constituency.</h4>
+     <br>
+     <h4>
+        Mohit Khode were a Maharashtra Navnirman Sena (MNS) candidate A defining characteristic of MNS, under the leadership of Raj Thackeray, is the party’s stance on job reservations for locals. Khode might focus on ensuring that Maharashtrians have priority in government and private sector jobs, particularly in Maharashtra. MNS has often focused on improving the urban landscape, especially in Mumbai and other Maharashtra cities. If Khode were a candidate, he would likely emphasize better infrastructure, public transport, and housing solutions for the city's growing population.
+     </h4>
+     
+     <h4>
+        Yashvant More were a Rastrawadi (Nationalist) candidate, his campaign would likely focus on promoting nationalism and patriotism.As a Rastrawadi candidate, More would advocate for the unity of India and might emphasize the need to protect the country from external threats, while promoting policies that ensure national security and economic independence.
+
+        Support for National Identity: He would likely push for the promotion of a unified national identity, encouraging the protection of India’s cultural heritage, traditions, and sovereignty. This could include support for Indian languages, arts, and history as symbols of national pride.
+     </h4>
+     </div>   
+     </div>
+     <footer class="footer">
+        <div class="footer-content">
+            <h3>&copy2024 Blockchain Voting System. All rights reserved.</h3>
+            <div class="social-media">
+               
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="c">
+                <h2>Contact Us</h2>
+                <div class="l">
+                <i class="fa-brands fa-facebook" id="logoc">
+    
+                </i>
+                <i class="fa-brands fa-linkedin-in" id="ld"></i>
+              
+                <i class="fa-brands fa-threads" id="n"></i>
+                <i class="fa-brands fa-instagram" id="kk"></i>
+                <i class="fa-brands fa-github"id="kr"></i>
+                <i class="fa-brands fa-whatsapp"id="kp"></i>
+                <i class="fa-brands fa-telegram"id="kc"></i>
+                <i class="fa-brands fa-discord"id="kd"></i>
+                <i class="fa-brands fa-youtube"id="kf"></i>
+                <i class="fa-brands fa-twitter"id="kg"></i>
+</div>
+            </div>
+        </div>
+        
+              
+    </footer>
+<style>
+     .c{ padding: 5px;
+   
+   border: 2x solid transparent;
+   margin-top:13px;
+
+}
+    .pl{
+        margin-top: 20px;
+    }
+    h4{
+        font-style: normal;
+        font-size: 18px;
+    }
+    .pos{
+        margin-top: 12px;
+       flex-direction: column;
+    }
+    .post{
+        flex-direction: column;
+    }
+ .pk{ margin-top: 10px;
+    height:850px;
+    width:1500px;
+    display:flex;
+    border: 5px solid black;
+    margin-right: 20px;
+    margin-left: 10px;
+ 
+ }
+    .p{
+     flex-direction: column;
+       
+        margin-left: 2px;
+ 
+
+    }
+    .pc{
+        margin-right: 40px;
+    }
+    .pp{
+        height:120px;
+        width:130px;
+    border: 5px solid goldenrod;
+        border-radius: 50%;
+        margin: 10px;
+        margin-left: 20px;
+display: flex;
+        align-items: center;
+        justify-content: center;
+        object-fit: contain;
+        flex-direction: column;
+
+    }
+    img{
+        width:90px;
+        height:90px;
+        
+    }
+
+        .logoc{
+      
+         
+            border: 5px;
+        }
+        .ld{
+
+            border: 5px;
+        }
+        .n{
+       
+            border: 5px;
+        }
+        .kk{
+            
+            border: 5px;
+        }
+        .fa-facebook:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+
+   .fa-linkedin-in:hover{
+   background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+
+           .fa-threads:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+
+           .fa-instagram:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-github:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-whatsapp:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-telegram:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+             .fa-facebook:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-discord:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-youtube:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-twitter:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .footer {
+            background-color:black;
+            color: #fff;
+          margin-top: -10px;
+     line-height: 0.2;
+            font-size: 14px;
+  height: 130px;
+
+            width: 1520px;
+        
+        }
+        .footer-content {
+          padding:1px;
+        justify-content: center;
+          text-align: center;
+       
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+          
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+<script>
+  document.getElementById("logoc").addEventListener("click", function () {
+    window.open("https://www.facebook.com/sagar.kulkarni.334491", "_blank");
+  });
+</script>
+
+<script>
+  document.getElementById("l").addEventListener("click", function () {
+    window.open("https://www.linkedin.com/in/lkshinde-251102bs/", "_blank");
+  });
+</script>
+
+<script>
+  document.getElementById("n").addEventListener("click", function () {
+    window.open("https://www.threads.net/@sagarkulkarni884?xmt=AQGzKV122YP30qtPal3U9SIzB9kDtGw1rVvuAgIIhEhkRkk", "_blank");
+  });
+</script>
+
+
+<script>
+  document.getElementById("kk").addEventListener("click", function () {
+    window.open("https://www.instagram.com/sagarkulkarni884/", "_blank");
+  });
+</script>
+
+
+
+  <script>
+  document.getElementById("kp").addEventListener("click", function () {
+    window.open("https://wa.me/919373629993?text=Hello%20I%20need%20help!", "_blank");
+  });
+</script>
+<script>
+  document.getElementById("kc").addEventListener("click", function () {
+    window.open("https://t.me/Mahavirkumark", "_blank");
+  });
+</script>
+<script>
+  document.getElementById("kd").addEventListener("click", function () {
+    window.open("https://discord.gg/NCdQzgJx", "_blank");
+  });
+</script>
+<script>
+  document.getElementById("kf").addEventListener("click", function () {
+    window.open("https://www.youtube.com/@SagarKulkarni-fw4bh", "_blank");
+  });
+</script>
+<script>
+    document.getElementById("kg").addEventListener("click", function () {
+      window.open("https://x.com/mahavirkumark1", "_blank");
+    });
+  </script>
+
+<script>
+  
+  document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+  console.log('Right-click context menu disabled!');
+});
+
+// Disable F12, Ctrl+Shift+I, and other DevTools shortcuts
+document.addEventListener('keydown', function (e) {
+  // Disable F12 (Developer Tools)
+  if (e.key === 'F12') {
+    e.preventDefault();
+    console.log('F12 (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+I (Developer Tools)
+  if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+I (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+J (Console) disabled!');
+  }
+  // Disable F11 (Fullscreen mode which sometimes triggers DevTools)
+  if (e.key === 'F11') {
+    e.preventDefault();
+    console.log('F11 (Fullscreen) disabled!');
+  }
+});
+
+// Detect and block PrintScreen (screenshot attempt)
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'PrintScreen') {
+    console.log('Screenshot attempt detected!');
+    document.body.style.filter = 'blur(10px)';
+    setTimeout(() => document.body.style.filter = '', 1000);  // Unblur after 1 second
+  }
+});
+
+// Prevent text selection (optional, if you want to stop users from copying text)
+document.body.style.userSelect = 'none';
+
+// Block the opening of Developer Tools from right-clicking the page (inspect)
+window.addEventListener('devtoolsopen', function() {
+  alert("Developer Tools are disabled.");
+});
+
+// Check if the DevTools is open (this works on some browsers)
+setInterval(function() {
+  const devtools = /./;
+  devtools.toString = function() {
+    alert("Developer Tools are disabled.");
+  };
+}, 1000);
+    </script>
+      
+
+
+
+  </head>
+</body>

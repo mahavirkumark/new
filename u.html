@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Voting Results</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      padding: 5px;
+    }
+    .chart-container {
+    
+  width: 600px;
+      text-align: center;
+      height: 600px;
+    }
+    .winner-container {
+      width: 300px;
+      background: linear-gradient(skyblue, lightblue);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      color: #333;
+ height: 220px;
+    }
+    .winner-info {
+      text-align: center;
+      margin-top: -10px;
+    }
+    .winner-info img {
+      border-radius: 50%;
+      margin: 5px;
+      height: 100px;
+      width: 100px;
+    }
+    .vote-table {
+      margin-top: 30px;
+  
+      background: #fff;
+      width: 300px;
+    }
+    .vote-table th, .vote-table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    .vote-table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    #loader {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    #loader img {
+      width: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+  background-color:#121262 ;
+       
+        height: 60px;
+        color:white;
+    }
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+      margin-right: 200px;
+   
+    }
+.box {
+    
+
+    width: calc(33.33% - 20px);
+    background-color: #f7f7f7;
+    padding: 10px;
+    margin: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px ;
+    height:400px;
+    width: 800px;
+ 
+    border: 10px solid white; /* Red border */
+   
+    border-top-color: #0000ff; /* Blue top border */
+    border-style: solid;
+    border-width: 2px;
+    background-color:skyblue;
+}
+
+
+
+.box-image {
+    width: 50px;
+    height: 5px;
+    margin: 0 auto;
+    object-fit: cover;
+  
+}
+
+
+
+
+
+
+
+
+
+.box1 {
+  width: 1520px;
+  height:950px;
+margin-top: 1px;
+  border: 1px solid #ddd;
+  margin-left: 0px;
+image-orientation: initial; 
+}
+
+.box1 img {
+  width:100%;
+  height:100%;
+   margin-bottom: 0px;
+
+
+}
+
+
+
+
+ .fa-brands{
+    margin-right: 3px;
+    
+    font-size: 25px;
+ 
+ }
+ .c{ padding: 5px;
+   
+    border: 2x solid transparent;
+
+ }
+ 
+.fa-hive{
+    font-size: 25px;
+    margin-top: 8px;
+}
+.l{
+    border:2px solid transparent;}
+
+
+    
+    .nav-links li {
+        display: inline;
+       
+    }
+    
+    .nav-item {
+        text-decoration: none;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 5px 10px;
+
+        transition: background-color 0.3s;
+        font-size: larger;
+             animation-name: c;
+        animation-delay: 0ms;
+        animation-duration: 3s;
+        animation: iteration count 1px;;
+        position: relative;
+        border: 1px solid transparent;
+    }
+
+    ul li:hover a{
+   
+        align-items:center ;
+        border-color: white;
+}
+.logo{
+    font-size: 20px;
+  text-decoration: none;
+        color: #ffffff;
+        font-weight: bold;
+        display: flex;
+ }
+.fa-users{
+  margin-top: 7px;
+  padding: 2px;
+  font-size: 20px;
+}
+
+#status{
+text-align: center;
+  display: flex;
+  justify-content: center;
+}
+  </style>
+</head>
+<body>
+
+   <nav class="navbar">
+        <div class="logo">
+          <i class="fa-solid fa-users"></i>
+            <p> Blockchain Voting System</p>
+              
+
+        </div>
+      
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="u.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-square-poll-vertical"></i> Voting Result</a></li>
+            <li><a href="candidate.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-person"></i> Candidate</a></li>
+            <li><a href="news.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-newspaper"></i> News</a></li>
+            <li><a href="j.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-lock"></i> Admin Panel</a></li>
+      
+        </ul>
+    </nav>
+<!-- Loader -->
+<div id="loader">
+  <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading...">
+  <p>Vote is calculating...</p>
+</div>
+ 
+<!-- Main Content Container -->
+<div class="container" id="mainContent" style="display: none;">
+  <div class="chart-container">
+    <canvas id="voteChartPie" width="400" height="400"></canvas>
+  </div>
+  <div class="winner-container" id="winnerContainer">
+    <!-- Winner info and vote table will be injected here -->
+  </div>
+</div>
+
+<script>
+  const partyMap = {
+    "BJP": { name: "Nitin Pandey", photo: "d.jpg", logo: "image1.png" },
+    "Congress": { name: "Veer Kale", photo: "e.jpg", logo: "image2.png" },
+    "Shivsena": { name: "Ajay Kamble", photo: "g.jpg", logo: "image3.png" },
+    "MNS": { name: "Mohit Khode", photo: "a.jpg", logo: "image4.png" },
+    "NCP": { name: "Yashvant More", photo: "b.jpg", logo: "image5.png" }
+  };
+
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbwIHM4OAaFoOSTmobI2gZ1lTllf3N7P7C_RB2YEDhgLpL62EPdfcqkpB0YV3nbECNIj/exec";
+
+  $(document).ready(function () {
+    $.getJSON(scriptUrl, function (res) {
+      const data = res.data;
+      const voteCounts = {};
+
+      data.forEach(row => {
+        const party = (row['vote-given-to-party'] || '').trim();
+        if (!party) return;
+        const normalized = party.charAt(0).toUpperCase() + party.slice(1).toLowerCase();
+        voteCounts[normalized] = (voteCounts[normalized] || 0) + 1;
+      });
+
+      const labels = Object.keys(voteCounts);
+      const counts = Object.values(voteCounts);
+      const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 'green'];
+
+      const ctx = document.getElementById('voteChartPie').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels,
+          datasets: [{
+            data: counts,
+            backgroundColor: colors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            datalabels: {
+              formatter: (value, ctx) => `${ctx.chart.data.labels[ctx.dataIndex]}: ${value}`,
+              color: '#fff',
+              font: { weight: 'bold', size: 16 }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+
+      const maxVotes = Math.max(...counts);
+      const winners = labels.filter((label, idx) => counts[idx] === maxVotes);
+      const sortedVotes = [...new Set(counts)].sort((a, b) => b - a);
+      const runnerUpVotes = sortedVotes[1] || 0;
+      const margin = maxVotes - runnerUpVotes;
+
+      let html = `<div class="winner-info"><h3>${winners.length > 1 ? "It's a Tie!" : "Winner"}</h3>`;
+      winners.forEach(party => {
+        const key = Object.keys(partyMap).find(k => k.toLowerCase() === party.toLowerCase());
+        const winner = partyMap[key];
+        if (winner) {
+          html += `<p><strong>${winner.name} (${key})</strong></p>
+            <img src="${winner.logo}" width="40" style="vertical-align: middle; margin-right: 10px;">
+            <img src="${winner.photo}" width="60" style="vertical-align: middle;"><br>`;
+        }
+      });
+      html += `<p><strong>${winners.length > 1 ? `Each got ${maxVotes} votes` : `Won by ${margin} vote${margin !== 1 ? 's' : ''}`}</strong></p></div>`;
+
+      html += `<table class="vote-table">
+        <tr><th>Party</th><th>Votes Obtained</th></tr>`;
+      labels.forEach((party, i) => {
+        html += `<tr><td>${party}</td><td>${counts[i]}</td></tr>`;
+      });
+      html += `</table>`;
+
+      $('#loader').hide();
+      $('#winnerContainer').html(html);
+      $('#mainContent').fadeIn();
+    });
+  });
+</script>
+</body>
+</html>

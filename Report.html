@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Results</title>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css"/>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <!-- jQuery & DataTables -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Adjust column widths */
+        th:nth-child(1), td:nth-child(1) { width: 20%; } /* Name */
+
+        th:nth-child(3), td:nth-child(3) { width: 20%; } /* Reason for Candidate */
+        th:nth-child(4), td:nth-child(4) { width: 20%; } /* Web Experience */
+        th:nth-child(5), td:nth-child(5) { width: 20%; } /* Suggestions */
+
+        /* Chart Containers */
+        .chart-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        #voteChartBar, #voteChartPie {
+            max-height: 600px;
+        }
+
+        .chart-container h2 {
+            font-weight: bold;
+        }
+
+        .bar-labels {
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Website Report</h1>
+
+    <!-- Table -->
+    <table id="pizza_party" class="display">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Timestamp</th>
+                <th>Reason for Candidate</th>
+                <th>Web Experience</th>
+                <th>Suggestions</th>
+            </tr>
+        </thead>
+    </table>
+
+    <!-- Charts -->
+    <div class="chart-container">
+        <h2>Vote Distribution (Pie Chart)</h2>
+        <canvas id="voteChartPie"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Vote Distribution (Bar Chart)</h2>
+        <canvas id="voteChartBar"></canvas>
+    </div>
+    <script>
+$(document).ready(function () {
+  const table = new DataTable('#pizza_party', {
+    ajax: 'https://script.google.com/macros/s/AKfycbxo_26lxF39beNgWpkS2009HekMLJJF7lpIhkNue5AWqrwdhnH6voLzzTAibYNy_f5j/exec',
+    columns: [
+      { data: 'Name' },
+      {
+        data: 'Timestamp',
+        render: function (data, type, row, meta) {
+          if (!data) return '';
+
+          const parts = data.split(' ');
+          if (parts.length !== 2) return data; // fallback
+
+          const dateParts = parts[0].split('/');
+          const timeParts = parts[1].split(':');
+          if (dateParts.length !== 3 || timeParts.length !== 3) return data; // fallback
+
+          const day    = parseInt(dateParts[0], 10);
+          const month  = parseInt(dateParts[1], 10) - 1;
+          const year   = parseInt(dateParts[2], 10);
+          const hour   = parseInt(timeParts[0], 10);
+          const minute = parseInt(timeParts[1], 10);
+          const second = parseInt(timeParts[2], 10);
+
+          const date = new Date(year, month, day, hour, minute, second);
+          return formatDate(date);
+        }
+      },
+      { data: 'Reason for Candidate' },
+      { data: 'Web Experience' },
+      { data: 'Suggestions' }
+    ],
+    initComplete: function () {
+      processChartData(this.api().data());
+    }
+  });
+
+  // Custom formatter for 'DD/MM/YYYY HH:mm:ss'
+  function formatDate(date) {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mi = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+    return `${dd}/${mm}/${yyyy} ${hh}:${mi}:${ss}`;
+  }
+
+  function processChartData(data) {
+    const voteCounts = {};
+    data.each(row => {
+      const key = row['Web Experience'];
+      voteCounts[key] = (voteCounts[key] || 0) + 1;
+    });
+
+    const labels = Object.keys(voteCounts);
+    const counts = Object.values(voteCounts);
+    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+
+    // Pie Chart
+    const ctxPie = document.getElementById('voteChartPie').getContext('2d');
+    new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [{ data: counts, backgroundColor: colors, hoverOffset: 4 }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          datalabels: {
+            formatter: (val, ctx) => `${ctx.chart.data.labels[ctx.dataIndex]}: ${val}`,
+            color: '#fff',
+            font: { weight: 'bold', size: 16 }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+
+    // Bar Chart
+    const ctxBar = document.getElementById('voteChartBar').getContext('2d');
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Number of Votes',
+          data: counts,
+          backgroundColor: colors,
+          borderColor: '#ccc',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { title: { display: true, text: 'Category' } },
+          y: { beginAtZero: true, title: { display: true, text: 'Votes' } }
+        },
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            formatter: v => v,
+            anchor: 'end',
+            align: 'top',
+            color: '#000',
+            font: { weight: 'bold', size: 16 }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+  }
+});
+</script>
+
+<script>
+  
+  document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+  console.log('Right-click context menu disabled!');
+});
+
+// Disable F12, Ctrl+Shift+I, and other DevTools shortcuts
+document.addEventListener('keydown', function (e) {
+  // Disable F12 (Developer Tools)
+  if (e.key === 'F12') {
+    e.preventDefault();
+    console.log('F12 (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+I (Developer Tools)
+  if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+I (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+J (Console) disabled!');
+  }
+  // Disable F11 (Fullscreen mode which sometimes triggers DevTools)
+  if (e.key === 'F11') {
+    e.preventDefault();
+    console.log('F11 (Fullscreen) disabled!');
+  }
+});
+
+// Detect and block PrintScreen (screenshot attempt)
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'PrintScreen') {
+    console.log('Screenshot attempt detected!');
+    document.body.style.filter = 'blur(10px)';
+    setTimeout(() => document.body.style.filter = '', 1000);  // Unblur after 1 second
+  }
+});
+
+// Prevent text selection (optional, if you want to stop users from copying text)
+document.body.style.userSelect = 'none';
+
+// Block the opening of Developer Tools from right-clicking the page (inspect)
+window.addEventListener('devtoolsopen', function() {
+  alert("Developer Tools are disabled.");
+});
+
+// Check if the DevTools is open (this works on some browsers)
+setInterval(function() {
+  const devtools = /./;
+  devtools.toString = function() {
+    alert("Developer Tools are disabled.");
+  };
+}, 1000);
+    </script>
+      
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

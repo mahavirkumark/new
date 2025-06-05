@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+      <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;         
+    background-image: url('c.jpg'); /* Path to your image */
+    background-size: cover; /* Ensures the image covers the entire area */
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0; /* Removes default margin */
+    padding: 0; /* Removes default padding */
+
+            
+        }
+        .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+  background-color:#121262 ;
+       
+        height: 60px;
+        color:white;
+    }
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+      margin-right: 200px;
+   
+    }
+     
+    .nav-links li {
+        display: inline;
+       
+    }
+    
+    .nav-item {
+        text-decoration: none;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 5px 10px;
+
+        transition: background-color 0.3s;
+        font-size: larger;
+             animation-name: c;
+        animation-delay: 0ms;
+        animation-duration: 4s;
+        animation: iteration count 1px;;
+        position: relative;
+        border: 1px solid transparent;
+    }
+
+    ul li:hover a{
+   
+        align-items:center ;
+        border-color: white;
+}
+        .footer {
+            background-color:black;
+            color: #fff;
+          margin-top: 300px;
+     line-height: 0.2;
+            font-size: 14px;
+  height: 130px;
+
+            width: 1520px;
+        
+        }
+        .footer-content {
+          padding:1px;
+        justify-content: center;
+          text-align: center;
+       
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+          
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+
+
+        .logo{
+    font-size: 20px;
+  text-decoration: none;
+        color: #ffffff;
+        font-weight: bold;
+        display: flex;
+ }
+p{ line-height: 0;
+    font-size: 25px;
+        animation-name: cv;
+    animation-duration: 3s;
+    animation-delay: 0ms;
+    animation-iteration-count:1;
+    position: relative;
+    margin-top: 20px;
+    margin-right: 100px;
+ }
+
+ @keyframes cv{
+    from{font-size:0px;}
+    to{ font-size:25px}
+    }
+ .fa-brands{
+    margin-right: 3px;
+    
+    font-size: 25px;
+ 
+ }
+ .c{ padding: 5px;
+   
+    border: 2x solid transparent;
+
+ }
+ 
+.fa-hive{
+    font-size: 25px;
+    margin-top: 8px;
+}
+.l{
+    border:2px solid transparent;}
+
+
+    .logo{
+           text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;  
+           
+        }
+        </style>
+        
+    <style>
+        .fa-facebook:hover{
+  background-color: blueviolet;
+            border:1px solid transparent;
+            border-radius: 50%;
+        }
+
+   .fa-linkedin-in:hover{
+   background-color: blueviolet;
+            border:1px solid transparent;
+            border-radius: 50%;
+        }
+
+           .fa-threads:hover{
+            background-color: blueviolet;
+            border:1px solid transparent;
+            border-radius: 50%;
+        }
+
+           .fa-instagram:hover{
+            background-color: blueviolet;
+            border:1px solid transparent;
+            border-radius: 50%;
+        }
+
+
+    </style>
+<script>
+  document.getElementById("logoc").addEventListener("click", function () {
+    window.open("https://www.facebook.com/sagar.kulkarni.334491", "_blank");
+  });
+</script>
+
+<script>
+  document.getElementById("l").addEventListener("click", function () {
+    window.open("https://www.linkedin.com/in/lkshinde-251102bs/", "_blank");
+  });
+</script>
+
+<script>
+  document.getElementById("n").addEventListener("click", function () {
+    window.open("https://www.threads.net/@sagarkulkarni884?xmt=AQGzKV122YP30qtPal3U9SIzB9kDtGw1rVvuAgIIhEhkRkk", "_blank");
+  });
+</script>
+
+
+<script>
+  document.getElementById("kk").addEventListener("click", function () {
+    window.open("https://www.instagram.com/sagarkulkarni884/", "_blank");
+  });
+</script>
+<script>
+  document.getElementById("k").addEventListener("click", function () {
+    window.open("https://web.whatsapp.com/", "_blank");
+  });
+</script>
+
+
+
+
+
+<style>
+
+    
+        .login-container {
+
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width:390px;
+            height:250px;
+            margin:200px;
+            margin-left: 500px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 80%;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+
+  
+
+    @keyframes c{
+        from{left:1100px}
+        to{ left:0px}
+
+        }
+    
+    
+    @keyframes cv{
+    from{font-size:0px;}
+    to{ font-size:25px}
+    }
+
+    .logo{
+    font-size: 20px;
+  text-decoration: none;
+        color: #ffffff;
+        font-weight: bold;
+        display: flex;
+ }
+p{ line-height: 0;
+    font-size: 25px;
+        animation-name: cv;
+    animation-duration: 3s;
+    animation-delay: 0ms;
+    animation-iteration-count:1;
+    position: relative;
+    margin-top: 20px;
+    margin-right: 100px;
+ }
+
+ @keyframes cv{
+    from{font-size:0px;}
+    to{ font-size:25px}
+    }
+ .fa-brands{
+    margin-right: 3px;
+    
+    font-size: 25px;
+ 
+ }
+ .c{ padding: 5px;
+   
+    border: 2x solid transparent;
+
+ }
+ 
+.fa-hive{
+    font-size: 25px;
+    margin-top: 8px;
+}
+.l{
+  border:2px solid transparent;}
+
+
+.fa-users{
+  margin-top: 7px;
+  padding: 2px;
+  font-size: 20px;
+}
+.fa-github:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-whatsapp:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-telegram:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+             .fa-facebook:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-discord:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-youtube:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+.kr{
+            
+            border: 5px;
+        }
+        .kp{
+            
+            border: 5px;
+        }
+        .kc{
+            
+            border: 5px;
+        }
+        .kd{
+            
+            border: 5px;
+        }
+        .kf{
+            
+            border: 5px;
+        }
+        .kg{
+            
+            border: 5px;
+        }
+ 
+      </style>
+   
+</head>
+<body>
+
+  
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-users"></i>
+            <p> Blockchain Voting System</p>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="u.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-square-poll-vertical"></i> Voting Result</a></li>
+            <li><a href="candidate.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-person"></i> Candidate</a></li>
+            <li><a href="news.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-newspaper"></i> News</a></li>
+            <li><a href="j.html" class="nav-item" onclick="setActive(this)"><i class="fa-solid fa-lock"></i> Admin Panel</a></li>
+        </ul>
+    </nav>
+
+<div class="login-container">
+<h1>Admin Login</h1>
+  <button class="google-btn" onclick="googleLogin()">
+        <div class="google-logo">G</div>
+       Login with Google 
+      </button> 
+
+  </div>
+
+
+
+         
+    
+<footer class="footer">
+    <div class="footer-content">
+        <h3>&copy; 2025 Blockchain Voting System. All rights reserved.</h3>
+        <div class="social-media">
+           
+        </div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+        <div class="c">
+            <h2>Contact Us</h2>
+            <div class="l">
+            <i class="fa-brands fa-facebook" id="logoc">
+
+            </i>
+            <i class="fa-brands fa-linkedin-in" id="l"></i>
+          
+            <i class="fa-brands fa-threads" id="n"></i>
+            <i class="fa-brands fa-instagram" id="kk"></i>
+            <i class="fa-brands fa-whatsapp"id="kp"></i>
+            <i class="fa-brands fa-github"id="kr"></i>
+            <i class="fa-brands fa-telegram"id="kc"></i>
+            <i class="fa-brands fa-discord"id="kd"></i>
+            <i class="fa-brands fa-youtube"id="kf"></i>
+            <i class="fa-brands fa-twitter"id="kg"></i>
+</div>
+        </div>
+    </div>
+    
+          
+</footer>
+<script>
+    document.getElementById("logoc").addEventListener("click", function () {
+      window.open("https://www.facebook.com/sagar.kulkarni.334491", "_blank");
+    });
+  </script>
+  
+  <script>
+    document.getElementById("ld").addEventListener("click", function () {
+      window.open("\https://www.linkedin.com/search/results/all/?fetchDeterministicClustersOnly=true&heroEntityKey=urn%3Ali%3Afsd_profile%3AACoAAFLj0DwB77JRQPNdIM8b-CtRpYE_XyuN41k&keywords=sagar%20kulkarni&origin=RICH_QUERY_SUGGESTION&position=0&searchId=3825e011-cca0-42bb-9406-1d5ad9b6e7de&sid=O9m&spellCorrectionEnabled=false/", "_blank");
+    });
+  </script>
+  
+  <script>
+    document.getElementById("n").addEventListener("click", function () {
+      window.open("https://www.threads.net/@sagarkulkarni884?xmt=AQGzKV122YP30qtPal3U9SIzB9kDtGw1rVvuAgIIhEhkRkk", "_blank");
+    });
+  </script>
+  
+  
+  <script>
+    document.getElementById("kk").addEventListener("click", function () {
+      window.open("https://www.instagram.com/sagarkulkarni884/", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kr").addEventListener("click", function () {
+      window.open("https://github.com/dashboard", "_blank");
+    });
+  </script>
+  
+  <script>
+    document.getElementById("kp").addEventListener("click", function () {
+      window.open("https://wa.me/919373629993?text=Hello%20I%20need%20help!", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kc").addEventListener("click", function () {
+      window.open("https://t.me/Mahavirkumark", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kd").addEventListener("click", function () {
+      window.open("https://discord.gg/NCdQzgJx", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kf").addEventListener("click", function () {
+      window.open("https://www.youtube.com/@SagarKulkarni-fw4bh", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kg").addEventListener("click", function () {
+      window.open("https://x.com/mahavirkumark1", "_blank");
+    });
+  </script>
+ 
+
+ <script>
+  document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+  console.log('Right-click context menu disabled!');
+});
+
+// Disable F12, Ctrl+Shift+I, and other DevTools shortcuts
+document.addEventListener('keydown', function (e) {
+  // Disable F12 (Developer Tools)
+  if (e.key === 'F12') {
+    e.preventDefault();
+    console.log('F12 (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+I (Developer Tools)
+  if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+I (Developer Tools) disabled!');
+  }
+  // Disable Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+    e.preventDefault();
+    console.log('Ctrl+Shift+J (Console) disabled!');
+  }
+  // Disable F11 (Fullscreen mode which sometimes triggers DevTools)
+  if (e.key === 'F11') {
+    e.preventDefault();
+    console.log('F11 (Fullscreen) disabled!');
+  }
+});
+
+// Detect and block PrintScreen (screenshot attempt)
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'PrintScreen') {
+    console.log('Screenshot attempt detected!');
+    document.body.style.filter = 'blur(10px)';
+    setTimeout(() => document.body.style.filter = '', 1000);  // Unblur after 1 second
+  }
+});
+
+// Prevent text selection (optional, if you want to stop users from copying text)
+document.body.style.userSelect = 'none';
+
+// Block the opening of Developer Tools from right-clicking the page (inspect)
+window.addEventListener('devtoolsopen', function() {
+  alert("Developer Tools are disabled.");
+});
+
+// Check if the DevTools is open (this works on some browsers)
+setInterval(function() {
+  const devtools = /./;
+  devtools.toString = function() {
+    alert("Developer Tools are disabled.");
+  };
+}, 1000);
+  </script>
+    <style>
+          .login-container {
+border: transparent;
+padding: 20px;
+            border-radius: 8px;
+     
+            text-align: center;
+            width:390px;
+            height:150px;
+            margin:200px;
+            margin-left: 500px;
+            align-items: center;
+         flex-direction: column;
+            justify-content: center;
+        }
+           
+    .google-btn {
+      margin-top: 35px;
+      background-color: #ffffff;
+  color: #444;
+border: 12px solid orange;
+  padding: 1px 6px;
+ border: #ccc;
+  cursor: pointer;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+margin-left: 25px;
+
+  transition: background-color 0.3s ease;
+  font-size: 18px;
+  height: 36px;
+  line-height: 1;
+  margin-bottom: 20px;
+    }
+    .fa-hive{
+    font-size: 25px;
+    margin-top: 8px;
+}
+.google-btn img {
+  width: 20px;
+  height: 17px;
+  object-fit: contain;
+  margin-right: 8px;
+}
+    .google-btn .google-logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 38px;
+      background: linear-gradient(45deg, #4285F4, #34A853, #FBBC05, #EA4335);
+      border-radius: 50%;
+      color:blueviolet;
+      font-weight: bold;
+      margin-right: 15px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      font-size: 20px;
+    }
+    .logo{
+           text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;  }
+    
+    .google-btn:hover {
+      background-color: #ffe0b2; /* soft orange */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: 0.3s ease-in-out;
+    }
+
+    .google-btn:hover .google-logo {
+      transform: scale(1.1);
+    }
+    </style>
+
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
+    authDomain: "sk12-58e9e.firebaseapp.com",
+    databaseURL: "https://sk12-58e9e-default-rtdb.firebaseio.com",
+    projectId: "sk12-58e9e",
+    storageBucket: "sk12-58e9e.firebasestorage.app",
+    messagingSenderId: "470207874652",
+    appId: "1:470207874652:web:67ba1cf3629b7e5b144899"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Allowed emails
+  const allowedEmails = [
+    "sagarkulkarni884@gmail.com",
+    "21070789@ycce.in"
+  ];
+
+  // Google login function
+  async function googleLogin() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    try {
+      const result = await firebase.auth().signInWithPopup(provider);
+      const user = result.user;
+      const email = user.email;
+
+      // Check if the email is allowed
+      if (allowedEmails.includes(email)) {
+        alert("Logged in as: " + user.displayName);
+        window.location.href = "welcome.html"; // redirect to voting page
+      } else {
+        await firebase.auth().signOut();
+        alert("Access denied. Your email is not authorized.");
+      }
+
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Login failed: " + error.message);
+    }
+  }
+</script>
+
+
+</body>
+</html>

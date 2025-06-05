@@ -1,0 +1,2307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+        /* Timer Box Styling */
+        #timer-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4757;
+            color: white;
+            padding: 15px 25px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Timer Reason Box */
+        #timer-reason {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: #fff;
+            color: #333;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 250px;
+            text-align: center;
+        }
+
+ 
+
+        /* Style the timer countdown text */
+        #timer {
+            font-size: 22px;
+            font-weight: bold;
+        }
+    </style>
+    
+
+    
+  
+
+ 
+
+    <style>
+        body{
+        
+display:flex;
+   
+
+ 
+background: linear-gradient(to right, blue, skyblue, pink);
+   
+    margin: 0; /* Removes default margin */
+    padding: 0; /* Removes default padding */
+    width: 100%; /* Full width of the viewport */
+    height: 100vh; /* Full height of the viewport */
+
+}
+
+        h1{
+            text-align:center;
+
+        }
+        
+    </style>
+    <script type="module" src="homepage.js"></script>
+</head>
+<body>
+   
+  
+
+    <title>Candidate Display</title>
+    <style>
+  
+        .k{
+            width:490px;
+    display:flex;
+           gap:10px;
+        margin-left: 170px;
+          margin-top: -450px;
+outline-width: 5px;
+         height:240px;
+         border:5px solid blue ;
+         border-left-color: blueviolet;
+
+         background: linear-gradient(to right, skyblue,violet, pink,blueviolet);
+        
+        }
+        
+
+        .candidate {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+
+        }
+
+        .circle {
+            width: 140px;
+            height: 140px;
+            background-color: #ddd;
+            border-radius: 50%;
+        
+            justify-content: center;
+            
+          overflow: hidden;
+            margin-bottom: 10px;
+       
+        }
+
+        .circle img {
+           
+            object-fit: contain;
+        }
+
+        .candidate-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 20px;
+        }
+
+        .pk{ margin-top: 2px;
+    height:700px;
+    width:1400px;
+    display:flex;
+
+   margin-left: 20px;
+
+ 
+ }
+    .p{
+     flex-direction: column;
+       
+        margin-left: 200px;
+ 
+
+    }
+    .pc{
+        margin-right: 40px;
+    }
+    .pp{
+        height:120px;
+        width:120px;
+    border: 5px solid goldenrod;
+        border-radius: 50%;
+        margin: 10px;
+        margin-left: 20px;
+display: flex;
+        align-items: center;
+        justify-content: center;
+        object-fit: contain;
+        flex-direction: column;
+      
+
+    }
+    img{
+        width:80px;
+        height:80px;
+        
+    } 
+    #welcome-message {
+      position: fixed;
+top: 20px;
+left: 800px;  /* Moved 50px from the left */
+font-size: 24px;
+font-weight: bold;
+color: #000;
+background: linear-gradient(to right, #e0f7ff, #ffe0e9);
+padding: 10px 20px;
+border-radius: 10px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+z-index: 1111;
+}
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+  <div>
+    <h3 id="welcome-message"></h3>
+  </div>
+
+    <div class="pk">
+        <div class="p">
+         <div class="pp"><img src="image1.png"></div>
+         <div class="pp"><img src="image2.png"></div>
+         <div class="pp"><img src="image3.png"></div>
+         <div class="pp"><img src="image4.jpeg"></div>
+         <div class="pp"><img src="image5.png"></div>
+     </div>
+     <div class="pc">
+         <div class="pp"><img src="d.jpg"></div>
+         <div class="pp"><img src="e.jpg"></div>
+         <div class="pp"><img src="g.jpg"></div>
+         <div class="pp"><img src="a.jpg"></div>
+         <div class="pp"><img src="b.jpg"></div>
+     </div>
+    
+         <div class="pr">
+            <br>
+            <p><h3><br>Nitin Pandey</h3></p>
+            <br>
+            <br> <br> 
+            <p><h3><br>Veer Kale</h3></p>
+            <br>
+            <br> <br> 
+            <p><h3><br>Ajay Kamble</h3></p>
+            <br>
+            <br> 
+            <p><h3><br>Mohit Khode</h3></p>
+            <br>
+            <br><br>  <br>
+            <p><h3><br>Yashvant More</h3></p>    
+         
+            <div class="k">
+                <form method="post" action="https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec" name="contact-form">
+                  
+                  <h2>Enter Details</h2>
+                                <div class="form-group">
+                    <label for="full-name">Full Name</label>
+                    <input
+                      type="text"
+                      name="full-name"
+                      id="full-name"
+                      placeholder="Enter your full name"
+                      readonly
+                      style="color: black; background-color: lightgray; border: 1px solid black;"
+                    />
+                  </div>
+              
+                  <div class="form-group">
+                    <label for="vote-given-to-party">Vote Given to Party</label>
+                    <select
+                      name="vote-given-to-party"
+                      id="vote-given-to-party"
+                      required
+                      style="color: black; background-color: white; border: 1px solid black;"
+                    >
+                      <option value="">Select Your Vote</option>
+                      <option value="BJP">BJP</option>
+                      <option value="Congress">Congress</option>
+                      <option value="Shiv Sena">Shiv Sena</option>
+                      <option value="Manse">Manse</option>
+                      <option value="Rastravadi congress">Rastravadi congress</option>
+                      <option value="Nota">Nota</option>
+                    </select>
+                  </div>
+              
+                  <input type="submit" value="Submit" id="submit" />
+                </form>
+              </div>
+              
+        <footer class="footer">
+            <div class="footer-content">
+                <h3>&copy2024 Blockchain Voting System. All rights reserved.</h3>
+                <div class="social-media">
+                   
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+                <div class="c">
+                    <h2>Contact Us</h2>
+                    <div class="l">
+                    <i class="fa-brands fa-facebook" id="logoc">
+        
+                    </i>
+                    <i class="fa-brands fa-linkedin-in" id="ld"></i>
+                  
+                    <i class="fa-brands fa-threads" id="n"></i>
+                    <i class="fa-brands fa-instagram" id="kk"></i>
+                    <i class="fa-brands fa-github"id="kr"></i>
+                    <i class="fa-brands fa-whatsapp"id="kp"></i>
+                    <i class="fa-brands fa-telegram"id="kc"></i>
+                    <i class="fa-brands fa-discord"id="kd"></i>
+                    <i class="fa-brands fa-youtube"id="kf"></i>
+                    <i class="fa-brands fa-twitter"id="kg"></i>
+    </div>
+                </div>
+            </div>
+            
+                  
+        </footer>
+
+
+<style>
+    h2{
+        text-align: center;
+    }
+		label{
+            width:150px;
+        }
+      p{
+        margin-left: -10px;
+      }
+      .kr{
+            
+            border: 5px;
+        }
+        .kp{
+            
+            border: 5px;
+        }
+        .kc{
+            
+            border: 5px;
+        }
+        .kd{
+            
+            border: 5px;
+        }
+        .kf{
+            
+            border: 5px;
+        }
+        .kg{
+            
+            border: 5px;
+        }
+        .fa-github:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-whatsapp:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-telegram:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+             .fa-facebook:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-discord:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-youtube:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-twitter:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+
+		/* Form group styling */
+		.form-group {
+			display: flex;
+			align-items: center;
+			margin-bottom: 15px;
+            height:30px;
+            margin-left: 10px;
+		}
+   
+
+		.form-group label {
+
+			font-weight: bold;
+            height:40px;
+            font-size: 18px;
+		}
+        label{
+            width:350px;
+        }
+
+		.form-group input,
+		.form-group select {
+			flex: 1;
+			padding: 8px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+            margin-left: -160px;
+            width:260px;
+            font-size: 15px;
+    line-height: 0.4;
+
+   
+           
+                 
+		}
+
+		/* Submit button styling */
+		#submit {
+			display: block;
+			margin: 20px auto 0; /* Centered */
+			background-color: #4caf50; /* Green background */
+			color: white;
+			font-size: 18px;
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			width: 55%; /* Button width */
+            margin-left: 200px ;
+		}
+
+		#submit:hover {
+			background-color: #45a049; /* Darker green on hover */
+		}
+        .footer {
+            background-color:black;
+            color: #fff;
+          
+     line-height: 0.2;
+            font-size: 14px;
+  height: 130px;
+  margin-top: 410px;
+  margin-left: -600px;
+
+            width: 1570px;
+        
+        }
+        .footer-content {
+          padding:1px;
+        justify-content: center;
+          text-align: center;
+       
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+          
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .fa-brands{
+    margin-right: 3px;
+    
+    font-size: 25px;}
+ 
+
+
+	
+    .logoc{
+      
+         
+        border: 5px;
+    }
+    .ld{
+
+        border: 5px;
+    }
+    .n{
+   
+        border: 5px;
+    }
+    .kk{
+        
+        border: 5px;
+    }
+    .kk{
+            
+            border: 5px;
+        }
+        .kr{
+            
+            border: 5px;
+        }
+        .kp{
+            
+            border: 5px;
+        }
+        .kc{
+            
+            border: 5px;
+        }
+        .kd{
+            
+            border: 5px;
+        }
+        .kf{
+            
+            border: 5px;
+        }
+        .kg{
+            
+            border: 5px;
+        }
+    .fa-facebook:hover{
+background-color: blue;
+        border:5px solid transparent;
+        border-radius: 50%;
+    }
+
+.fa-linkedin-in:hover{
+background-color: blue;
+        border:5px solid transparent;
+        border-radius: 50%;
+    }
+
+       .fa-threads:hover{
+        background-color: blue;
+        border:5px solid transparent;
+        border-radius: 50%;
+    }
+
+       .fa-instagram:hover{
+        background-color: blue;
+        border:5px solid transparent;
+        border-radius: 50%;
+    }
+    .fa-github:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-whatsapp:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-telegram:hover{
+            background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+             .fa-facebook:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-discord:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-youtube:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+        .fa-twitter:hover{
+  background-color: blue;
+            border:5px solid transparent;
+            border-radius: 50%;
+        }
+@media screen and (max-width: 420px) {
+  body, html {
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+    background: #f4f4f4 !important;
+    background-image: none !important;
+  }
+
+  .pk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+  }
+
+  .p, .pc {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .pp img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .pr {
+    text-align: center;
+    margin-top: 10px;
+    padding: 0 10px;
+  }
+
+  .pr h3 {
+    font-size: 16px;
+    margin: 8px 0;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  #submit {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 20px 10px;
+  }
+
+  .footer h3 {
+    font-size: 14px;
+  }
+
+  .footer-links a {
+    display: block;
+    margin: 5px 0;
+    font-size: 14px;
+  }
+
+  .c h2 {
+    font-size: 16px;
+  }
+
+  .l i {
+    font-size: 18px;
+    margin: 6px;
+  }
+}
+
+</style>
+<script>
+document.getElementById("logoc").addEventListener("click", function () {
+window.open("https://www.facebook.com/sagar.kulkarni.334491", "_blank");
+});
+</script>
+
+<script>
+document.getElementById("l").addEventListener("click", function () {
+window.open("https://www.linkedin.com/in/lkshinde-251102bs/", "_blank");
+});
+</script>
+
+<script>
+document.getElementById("n").addEventListener("click", function () {
+window.open("https://www.threads.net/@sagarkulkarni884?xmt=AQGzKV122YP30qtPal3U9SIzB9kDtGw1rVvuAgIIhEhkRkk", "_blank");
+});
+</script>
+
+
+<script>
+document.getElementById("kk").addEventListener("click", function () {
+window.open("https://www.instagram.com/sagarkulkarni884/", "_blank");
+});
+</script>
+<script>
+document.getElementById("k").addEventListener("click", function () {
+window.open("https://web.whatsapp.com/", "_blank");
+});
+</script>
+<script>
+    document.getElementById("kr").addEventListener("click", function () {
+      window.open("https://github.com/dashboard", "_blank");
+    });
+  </script>
+  
+  <script>
+    document.getElementById("kp").addEventListener("click", function () {
+      window.open("https://wa.me/919373629993?text=Hello%20I%20need%20help!", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kc").addEventListener("click", function () {
+      window.open("https://t.me/Mahavirkumark", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kd").addEventListener("click", function () {
+      window.open("https://discord.gg/NCdQzgJx", "_blank");
+    });
+  </script>
+  <script>
+    document.getElementById("kf").addEventListener("click", function () {
+      window.open("https://www.youtube.com/@SagarKulkarni-fw4bh", "_blank");
+    });
+  </script>
+ <script>
+    document.getElementById("kg").addEventListener("click", function () {
+      window.open("https://x.com/mahavirkumark1", "_blank");
+    });
+  </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
+    authDomain: "sk12-58e9e.firebaseapp.com",
+    databaseURL: "https://sk12-58e9e-default-rtdb.firebaseio.com",
+    projectId: "sk12-58e9e",
+    storageBucket: "sk12-58e9e.appspot.com",
+    messagingSenderId: "470207874652",
+    appId: "1:470207874652:web:67ba1cf3629b7e5b144899"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.forms['contact-form'];
+    const submitButton = document.getElementById('submit');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
+
+    // 👉 DELAYED VOTE CHECK — happens only on revisit
+    if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
+      alert("You have already voted. Redirecting to feedback...");
+      window.location.href = "feedback.html";
+      return;
+    }
+
+    // Mark that this page was visited once
+    sessionStorage.setItem("visitedOnce", "true");
+
+    onAuthStateChanged(auth, user => {
+      if (user && user.displayName) {
+        document.getElementById("full-name").value = user.displayName;
+        form.dataset.userEmail = user.email;
+
+        // ✅ Show welcome message
+        const welcomeEl = document.getElementById("welcome-message");
+        if (welcomeEl) {
+          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
+        }
+      } else {
+        window.location.replace("index.html");
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fullName = document.getElementById('full-name').value.trim();
+      const voteGiven = document.getElementById('vote-given-to-party').value.trim();
+      const email = form.dataset.userEmail || "";
+
+      if (!fullName || !voteGiven) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.value = "Submitting...";
+
+      try {
+        const formData = new FormData(form);
+        formData.append("email", email);
+
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.result === "duplicate") {
+          alert("You have already voted.");
+          submitButton.disabled = false;
+          submitButton.value = "Submit";
+          return;
+        }
+
+        if (result.result === "success") {
+          localStorage.setItem("voted", "true");
+          alert("Thank You for Voting, Your Vote is Submitted");
+          window.location.href = 'feedback.html';
+        } else {
+          throw new Error(result.message || "Submission failed");
+        }
+
+      } catch (error) {
+        console.error('Error!', error.message);
+        alert("An error occurred. Please try again.");
+        submitButton.disabled = false;
+        submitButton.value = "Submit";
+      }
+    });
+  });
+</script>
+
+
+    
+
+
+
+
+
+
+
+</body>
+</html>
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+       
+
+
+
+
+
+
+
+       
+
+
+
+
+
+
+       
+
+       
+
+
+
+
+
+
+
+
+
+
