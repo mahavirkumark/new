@@ -743,7 +743,8 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const scriptURL = 'https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec'; // <-- Replace with your actual URL
+  // Replace this URL with your deployed Google Apps Script Web App URL
+  const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
 
   function generateAndDownloadPDF({ firstName, voteGiven }) {
     const { jsPDF } = window.jspdf;
@@ -801,7 +802,7 @@ window.open("https://web.whatsapp.com/", "_blank");
 
     onAuthStateChanged(auth, user => {
       if (user && user.displayName) {
-        // Show full name on form page input
+        // Show full name on form input and welcome message
         document.getElementById("full-name").value = user.displayName;
         form.dataset.userEmail = user.email;
 
@@ -816,7 +817,7 @@ window.open("https://web.whatsapp.com/", "_blank");
       e.preventDefault();
 
       const fullName = document.getElementById('full-name').value.trim();
-      const firstName = fullName.split(' ')[0]; // Use only first name in PDF
+      const firstName = fullName.split(' ')[0]; // Only first name for PDF
       const voteGiven = document.getElementById('vote-given-to-party').value.trim();
 
       if (!fullName || !voteGiven) {
@@ -898,6 +899,7 @@ window.open("https://web.whatsapp.com/", "_blank");
     }
   });
 </script>
+
 
 
 
