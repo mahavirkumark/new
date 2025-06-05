@@ -721,14 +721,14 @@ window.open("https://web.whatsapp.com/", "_blank");
     });
   </script>
 <!-- Add jsPDF CDN -->
-<!-- Include jsPDF CDN -->
+<!-- Include jsPDF library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  // Your Firebase config here
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
     authDomain: "sk12-58e9e.firebaseapp.com",
@@ -742,78 +742,83 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const scriptURL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'; // <-- Replace with your Apps Script URL
-
-  // Function to generate and download PDF receipt
-  function generateAndDownloadPDF({ fullName, voteGiven, timestamp }) {
+  // PDF generation helper
+  function generatePDF({ fullName, voteGiven, timestamp }) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Add watermark - big, centered text (light gray)
+    // Add watermark text (light gray, rotated)
     doc.setTextColor(200, 200, 200);
     doc.setFontSize(60);
     doc.text("ELECTION COMMISSION OF INDIA", 105, 150, { align: "center", angle: 45 });
 
-    // Reset color and add header
+    // Reset color & add header
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(18);
     doc.text("Election Commission of India", 105, 25, { align: "center" });
-
-    // Draw a line below header
     doc.setLineWidth(0.5);
     doc.line(20, 30, 190, 30);
 
     doc.setFontSize(14);
-    doc.text("Voting Receipt", 105, 40, { align: "center" });
+    doc.text("Official Voting Receipt", 105, 40, { align: "center" });
 
+    // User details & vote
     doc.setFontSize(12);
-    doc.text(`Name: ${fullName}`, 20, 60);
-    doc.text(`Voted For: ${voteGiven}`, 20, 70);
+    doc.text(`Voter Name: ${fullName}`, 20, 60);
+    doc.text(`Vote Cast For: ${voteGiven}`, 20, 70);
     doc.text(`Date & Time: ${timestamp}`, 20, 80);
 
-    doc.text("A confirmation email has been sent to your registered email address.", 20, 100);
-    doc.text("Thank you for participating in the democratic process.", 20, 110);
+    // Thank you note
+    doc.text("Thank you for participating in the democratic process.", 20, 100);
+    doc.text("Your vote has been securely recorded.", 20, 110);
 
-    // Simulate Governor's Stamp and Signature (simple text placeholder)
+    // Signature & stamp placeholders at bottom right
     doc.setFontSize(12);
     doc.text("Governor's Stamp & Signature", 150, 270);
+    doc.line(150, 268, 190, 268); // line for signature
 
-    const safeFullName = fullName.replace(/\s+/g, '_');
-    const fileName = `Vote_Receipt_${safeFullName}_${Date.now()}.pdf`;
-    doc.save(fileName);
+    // Save with meaningful filename
+    const safeName = fullName.replace(/\s+/g, "_");
+    const filename = `Vote_Receipt_${safeName}_${Date.now()}.pdf`;
+    doc.save(filename);
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("vote-form");
-    const submitButton = document.getElementById("submit");
-    const nameInput = document.getElementById("full-name");
+    const form = document.forms['contact-form'];
+    const submitButton = document.getElementById('submit');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
+
+    if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
+      alert("You have already voted. Redirecting to feedback...");
+      window.location.href = "feedback.html";
+      return;
+    }
+
+    sessionStorage.setItem("visitedOnce", "true");
 
     onAuthStateChanged(auth, user => {
-      if (user) {
-        console.log("Logged in user:", user);
-        nameInput.value = user.displayName || "";
-        nameInput.readOnly = true;
-        form.dataset.userEmail = user.email || "";
+      if (user && user.displayName) {
+        document.getElementById("full-name").value = user.displayName;
+        form.dataset.userEmail = user.email;
+
+        const welcomeEl = document.getElementById("welcome-message");
+        if (welcomeEl) {
+          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
+        }
       } else {
-        console.log("No user logged in. Redirecting to login page.");
         window.location.replace("index.html");
       }
     });
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const fullName = nameInput.value.trim();
-      const voteGiven = document.getElementById("vote-given-to-party").value.trim();
+      const fullName = document.getElementById('full-name').value.trim();
+      const voteGiven = document.getElementById('vote-given-to-party').value.trim();
       const email = form.dataset.userEmail || "";
 
-      if (!fullName) {
-        alert("User name not found. Please login again.");
-        return;
-      }
-
-      if (!voteGiven) {
-        alert("Please select a party to vote for.");
+      if (!fullName || !voteGiven) {
+        alert("Please fill in all fields.");
         return;
       }
 
@@ -821,56 +826,52 @@ window.open("https://web.whatsapp.com/", "_blank");
       submitButton.value = "Submitting...";
 
       try {
-        const formData = new FormData();
-        formData.append("fullName", fullName);
-        formData.append("voteGiven", voteGiven);
+        const formData = new FormData(form);
         formData.append("email", email);
 
         const response = await fetch(scriptURL, {
-          method: "POST",
+          method: 'POST',
           body: formData
         });
 
-        console.log("Response status:", response.status);
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
         const result = await response.json();
-        console.log("Server response:", result);
 
         if (result.result === "duplicate") {
-          alert("You have already voted. Duplicate vote not allowed.");
+          alert("You have already voted.");
           submitButton.disabled = false;
           submitButton.value = "Submit";
           return;
         }
 
         if (result.result === "success") {
-          // Use timestamp from server if available, else use local time
+          localStorage.setItem("voted", "true");
+
+          // Use server timestamp or fallback to local time
           const timestamp = result.timestamp || new Date().toLocaleString();
 
-          generateAndDownloadPDF({ fullName, voteGiven, timestamp });
+          // Generate and auto-download PDF receipt
+          generatePDF({ fullName, voteGiven, timestamp });
 
-          alert("Thank you for voting! Your vote has been recorded.");
+          alert("Thank You for Voting, Your Vote is Submitted");
 
-          // Redirect to feedback page after short delay to allow PDF download start
+          // Redirect after short delay to allow PDF download
           setTimeout(() => {
-            window.location.href = "feedback.html";
+            window.location.href = 'feedback.html';
           }, 1500);
         } else {
-          throw new Error(result.message || "Vote submission failed");
+          throw new Error(result.message || "Submission failed");
         }
+
       } catch (error) {
-        console.error("Error submitting vote:", error);
-        alert("An error occurred while submitting your vote. Please try again.");
+        console.error('Error!', error.message);
+        alert("An error occurred. Please try again.");
         submitButton.disabled = false;
         submitButton.value = "Submit";
       }
     });
   });
 </script>
+
 
 
     
