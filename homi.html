@@ -727,14 +727,14 @@ window.open("https://web.whatsapp.com/", "_blank");
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <!-- Main Secure Script -->
-<!-- jsPDF Library -->
+<!-- Add jsPDF CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- Main Secure Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
     authDomain: "sk12-58e9e.firebaseapp.com",
@@ -748,38 +748,51 @@ window.open("https://web.whatsapp.com/", "_blank");
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  function generatePDF({ fullName, voteGiven }) {
+  // PDF Generation function
+  function generateAndDownloadPDF({ fullName, voteGiven }) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const name = fullName.trim().split(" ")[0];
-    const timestamp = new Date().toLocaleString();
 
-    doc.setTextColor(200);
-    doc.setFontSize(40);
-    doc.text("ELECTION COMMISSION", 105, 150, { align: "center", angle: 45 });
-    doc.setTextColor(0);
+    const now = new Date();
+    const timestamp = now.toLocaleString();
+    const firstName = fullName.split(" ")[0];
 
-    doc.setFontSize(18);
-    doc.text("Election Commission of India", 105, 30, { align: "center" });
+    const logoUrl = "https://www.presentations.gov.in/wp-content/uploads/2021/03/Election-Commission-of-India-Logo.png";
+    const signatureUrl = "https://cdn.prod.website-files.com/61d7de73eec437f52da6d699/62161cf7328ad280841f653f_esignature-signature.png";
 
-    // Load ECI logo
-    const logo = new Image();
-    logo.crossOrigin = "Anonymous";
-    logo.src = "https://upload.wikimedia.org/wikipedia/commons/3/3c/Election_Commission_of_India_logo.png";
+    const watermarkText = "Election Commission of India";
 
-    logo.onload = () => {
-      doc.addImage(logo, "PNG", 80, 35, 50, 20);
+    const loadImage = (url) => new Promise((resolve) => {
+      const img = new Image();
+      img.setAttribute('crossOrigin', 'anonymous');
+      img.onload = () => resolve(img);
+      img.src = url;
+    });
+
+    Promise.all([loadImage(logoUrl), loadImage(signatureUrl)]).then(([logo, signature]) => {
+      doc.addImage(logo, 'PNG', 75, 10, 60, 25); // Logo at top center
+
+      doc.setFontSize(20);
+      doc.text("Election Commission of India", 105, 45, null, null, "center");
 
       doc.setFontSize(12);
-      doc.text(`Voter Name: ${name}`, 20, 70);
+      doc.text(`Name: ${firstName}`, 20, 70);
       doc.text(`Voted For: ${voteGiven}`, 20, 80);
       doc.text(`Date & Time: ${timestamp}`, 20, 90);
-      doc.text("Vote successfully submitted.", 20, 110);
+      doc.text("Thank you for voting. A copy of this receipt is generated for your record.", 20, 105);
 
-      doc.text("Signature & Stamp of Chief Officer", 135, 270);
+      // Add signature and stamp
+      doc.addImage(signature, 'PNG', 140, 230, 40, 20);
+      doc.text("Signature", 160, 255);
 
-      doc.save(`Voting_Receipt_${name}.pdf`);
-    };
+      // Add watermark text
+      doc.setFontSize(40);
+      doc.setTextColor(150, 150, 150);
+      doc.text(watermarkText, 105, 150, { align: "center", angle: 45 });
+
+      const fileName = `Vote_Receipt_${firstName}_${now.getTime()}.pdf`;
+      doc.save(fileName);
+    });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -798,7 +811,11 @@ window.open("https://web.whatsapp.com/", "_blank");
     onAuthStateChanged(auth, user => {
       if (user && user.displayName) {
         document.getElementById("full-name").value = user.displayName;
-        document.getElementById("welcome-message").textContent = `Welcome Dear ${user.displayName}`;
+        form.dataset.userEmail = user.email;
+        const welcomeEl = document.getElementById("welcome-message");
+        if (welcomeEl) {
+          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
+        }
       } else {
         window.location.replace("index.html");
       }
@@ -806,7 +823,6 @@ window.open("https://web.whatsapp.com/", "_blank");
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const fullName = document.getElementById('full-name').value.trim();
       const voteGiven = document.getElementById('vote-given-to-party').value.trim();
 
@@ -820,9 +836,13 @@ window.open("https://web.whatsapp.com/", "_blank");
 
       try {
         const formData = new FormData(form);
-        formData.append("email", "private");
+        formData.append("email", form.dataset.userEmail || "");
 
-        const response = await fetch(scriptURL, { method: 'POST', body: formData });
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: formData
+        });
+
         const result = await response.json();
 
         if (result.result === "duplicate") {
@@ -834,9 +854,8 @@ window.open("https://web.whatsapp.com/", "_blank");
 
         if (result.result === "success") {
           localStorage.setItem("voted", "true");
-          generatePDF({ fullName, voteGiven });
-          alert("Thank You for Voting. Receipt downloaded.");
-
+          generateAndDownloadPDF({ fullName, voteGiven });
+          alert("Thank You for Voting, Your Vote is Submitted. Receipt will be downloaded.");
           setTimeout(() => {
             window.location.href = 'feedback.html';
           }, 2000);
@@ -845,8 +864,8 @@ window.open("https://web.whatsapp.com/", "_blank");
         }
 
       } catch (error) {
+        console.error('Error!', error.message);
         alert("An error occurred. Please try again.");
-        console.error(error.message);
         submitButton.disabled = false;
         submitButton.value = "Submit";
       }
@@ -854,40 +873,30 @@ window.open("https://web.whatsapp.com/", "_blank");
   });
 </script>
 
-<!-- Security & Anti-screenshot script (Offline-capable) -->
 <script>
+  // Offline/Anti-cheat Measures
   document.addEventListener('contextmenu', e => e.preventDefault());
-
-  document.addEventListener('keydown', function (e) {
+  document.addEventListener('keydown', e => {
     if (
       e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
-      (e.ctrlKey && e.key === 'U')
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+      e.key === 'F11'
     ) {
       e.preventDefault();
-      alert('Developer Tools are disabled.');
     }
   });
-
-  document.addEventListener('keyup', function (e) {
+  document.addEventListener('keyup', e => {
     if (e.key === 'PrintScreen') {
-      document.body.style.filter = 'blur(8px)';
+      document.body.style.filter = 'blur(10px)';
       setTimeout(() => document.body.style.filter = '', 1000);
-      alert("Screenshots are not allowed.");
     }
   });
-
   document.body.style.userSelect = 'none';
-
   setInterval(() => {
-    const element = new Image();
-    Object.defineProperty(element, 'id', {
-      get: function () {
-        alert("Developer Tools are disabled.");
-        throw new Error("DevTools check");
-      }
-    });
-    console.log(element);
+    const devtools = /./;
+    devtools.toString = () => {
+      alert("Developer Tools are disabled.");
+    };
   }, 1000);
 </script>
 
