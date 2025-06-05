@@ -724,180 +724,182 @@ window.open("https://web.whatsapp.com/", "_blank");
 <!-- Include jsPDF library -->
 <!-- Add 
 		 <!-- jsPDF Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<!-- Main Secure Script -->
-<!-- Add jsPDF CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  // Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
-    authDomain: "sk12-58e9e.firebaseapp.com",
-    databaseURL: "https://sk12-58e9e-default-rtdb.firebaseio.com",
-    projectId: "sk12-58e9e",
-    storageBucket: "sk12-58e9e.appspot.com",
-    messagingSenderId: "470207874652",
-    appId: "1:470207874652:web:67ba1cf3629b7e5b144899"
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyB78RTVCg0cmSPp7A1RJyyAgBuCeolO0cc",
+  authDomain: "sk12-58e9e.firebaseapp.com",
+  projectId: "sk12-58e9e",
+  storageBucket: "sk12-58e9e.appspot.com",
+  messagingSenderId: "470207874652",
+  appId: "1:470207874652:web:67ba1cf3629b7e5b144899"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// PDF Generation
+function generateAndDownloadPDF({ fullName, voteGiven }) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const nameOnly = fullName.split(" ")[0];
+  const now = new Date();
+  const timestamp = now.toLocaleString();
+
+  // Election Commission Logo
+  const logoURL = "https://www.presentations.gov.in/wp-content/uploads/2021/12/eci-logo.png";
+  const signatureURL = "https://cdn.prod.website-files.com/61d7de73eec437f52da6d699/62161cf7328ad280841f653f_esignature-signature.png";
+  const watermarkText = "Election Commission of India";
+
+  // Add logo
+  const addImageToPDF = async (doc, url, x, y, w, h) => {
+    const img = await fetch(url).then(res => res.blob()).then(blob => {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    });
+    doc.addImage(img, "PNG", x, y, w, h);
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  (async () => {
+    await addImageToPDF(doc, logoURL, 10, 10, 30, 30);
 
-  // PDF Generation function
-  function generateAndDownloadPDF({ fullName, voteGiven }) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    // Watermark
+    doc.setTextColor(150);
+    doc.setFontSize(50);
+    doc.text(watermarkText, 105, 150, { align: "center", angle: 45 });
 
-    const now = new Date();
-    const timestamp = now.toLocaleString();
-    const firstName = fullName.split(" ")[0];
+    // Main Heading
+    doc.setTextColor(0);
+    doc.setFontSize(18);
+    doc.text("Election Commission of India", 105, 50, { align: "center" });
+    doc.setFontSize(14);
+    doc.text("Voting Receipt", 105, 65, { align: "center" });
 
-    const logoUrl = "https://www.presentations.gov.in/wp-content/uploads/2021/03/Election-Commission-of-India-Logo.png";
-    const signatureUrl = "https://cdn.prod.website-files.com/61d7de73eec437f52da6d699/62161cf7328ad280841f653f_esignature-signature.png";
+    // Voting Details
+    doc.setFontSize(12);
+    doc.text(`Name: ${nameOnly}`, 20, 90);
+    doc.text(`Voted For: ${voteGiven}`, 20, 100);
+    doc.text(`Date & Time: ${timestamp}`, 20, 110);
+    doc.text("Thank you for casting your vote.", 20, 125);
 
-    const watermarkText = "Election Commission of India";
+    // Signature & stamp
+    await addImageToPDF(doc, signatureURL, 130, 140, 50, 20);
+    doc.text("Authorized Signatory", 140, 165);
 
-    const loadImage = (url) => new Promise((resolve) => {
-      const img = new Image();
-      img.setAttribute('crossOrigin', 'anonymous');
-      img.onload = () => resolve(img);
-      img.src = url;
-    });
+    const fileName = `Vote_Receipt_${nameOnly}_${now.getTime()}.pdf`;
+    doc.save(fileName);
+  })();
+}
 
-    Promise.all([loadImage(logoUrl), loadImage(signatureUrl)]).then(([logo, signature]) => {
-      doc.addImage(logo, 'PNG', 75, 10, 60, 25); // Logo at top center
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.forms['contact-form'];
+  const submitButton = document.getElementById('submit');
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
 
-      doc.setFontSize(20);
-      doc.text("Election Commission of India", 105, 45, null, null, "center");
-
-      doc.setFontSize(12);
-      doc.text(`Name: ${firstName}`, 20, 70);
-      doc.text(`Voted For: ${voteGiven}`, 20, 80);
-      doc.text(`Date & Time: ${timestamp}`, 20, 90);
-      doc.text("Thank you for voting. A copy of this receipt is generated for your record.", 20, 105);
-
-      // Add signature and stamp
-      doc.addImage(signature, 'PNG', 140, 230, 40, 20);
-      doc.text("Signature", 160, 255);
-
-      // Add watermark text
-      doc.setFontSize(40);
-      doc.setTextColor(150, 150, 150);
-      doc.text(watermarkText, 105, 150, { align: "center", angle: 45 });
-
-      const fileName = `Vote_Receipt_${firstName}_${now.getTime()}.pdf`;
-      doc.save(fileName);
-    });
+  if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
+    alert("You have already voted. Redirecting to feedback...");
+    window.location.href = "feedback.html";
+    return;
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.forms['contact-form'];
-    const submitButton = document.getElementById('submit');
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzYXBOPBWh22rHzXI6SOLh5yE410FP37Qfa9nGeg4M02dW6Wly2oZdrHN1uLzhMQiLv/exec';
+  sessionStorage.setItem("visitedOnce", "true");
 
-    if (localStorage.getItem("voted") === "true" && sessionStorage.getItem("visitedOnce") === "true") {
-      alert("You have already voted. Redirecting to feedback...");
-      window.location.href = "feedback.html";
+  onAuthStateChanged(auth, user => {
+    if (user && user.displayName) {
+      const firstName = user.displayName.split(" ")[0];
+      document.getElementById("full-name").value = firstName;
+      form.dataset.userEmail = user.email;
+
+      const welcomeEl = document.getElementById("welcome-message");
+      if (welcomeEl) {
+        welcomeEl.textContent = `Welcome Dear ${firstName}`;
+      }
+    } else {
+      window.location.replace("index.html");
+    }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const fullName = document.getElementById('full-name').value.trim();
+    const voteGiven = document.getElementById('vote-given-to-party').value.trim();
+
+    if (!fullName || !voteGiven) {
+      alert("Please fill in all fields.");
       return;
     }
 
-    sessionStorage.setItem("visitedOnce", "true");
+    submitButton.disabled = true;
+    submitButton.value = "Submitting...";
 
-    onAuthStateChanged(auth, user => {
-      if (user && user.displayName) {
-        document.getElementById("full-name").value = user.displayName;
-        form.dataset.userEmail = user.email;
-        const welcomeEl = document.getElementById("welcome-message");
-        if (welcomeEl) {
-          welcomeEl.textContent = `Welcome Dear ${user.displayName}`;
-        }
-      } else {
-        window.location.replace("index.html");
-      }
-    });
+    try {
+      const formData = new FormData(form);
+      formData.append("email", form.dataset.userEmail || "");
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fullName = document.getElementById('full-name').value.trim();
-      const voteGiven = document.getElementById('vote-given-to-party').value.trim();
+      const response = await fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      });
 
-      if (!fullName || !voteGiven) {
-        alert("Please fill in all fields.");
+      const result = await response.json();
+
+      if (result.result === "duplicate") {
+        alert("You have already voted.");
+        submitButton.disabled = false;
+        submitButton.value = "Submit";
         return;
       }
 
-      submitButton.disabled = true;
-      submitButton.value = "Submitting...";
+      if (result.result === "success") {
+        localStorage.setItem("voted", "true");
+        generateAndDownloadPDF({ fullName, voteGiven });
 
-      try {
-        const formData = new FormData(form);
-        formData.append("email", form.dataset.userEmail || "");
-
-        const response = await fetch(scriptURL, {
-          method: 'POST',
-          body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.result === "duplicate") {
-          alert("You have already voted.");
-          submitButton.disabled = false;
-          submitButton.value = "Submit";
-          return;
-        }
-
-        if (result.result === "success") {
-          localStorage.setItem("voted", "true");
-          generateAndDownloadPDF({ fullName, voteGiven });
-          alert("Thank You for Voting, Your Vote is Submitted. Receipt will be downloaded.");
-          setTimeout(() => {
-            window.location.href = 'feedback.html';
-          }, 2000);
-        } else {
-          throw new Error(result.message || "Submission failed");
-        }
-
-      } catch (error) {
-        console.error('Error!', error.message);
-        alert("An error occurred. Please try again.");
-        submitButton.disabled = false;
-        submitButton.value = "Submit";
+        alert("Your vote has been submitted. A receipt is downloading...");
+        setTimeout(() => window.location.href = 'feedback.html', 2000);
+      } else {
+        throw new Error(result.message || "Submission failed");
       }
-    });
-  });
-</script>
 
-<script>
-  // Offline/Anti-cheat Measures
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-      e.key === 'F11'
-    ) {
-      e.preventDefault();
+    } catch (error) {
+      console.error('Error!', error.message);
+      alert("An error occurred. Please try again.");
+      submitButton.disabled = false;
+      submitButton.value = "Submit";
     }
   });
-  document.addEventListener('keyup', e => {
-    if (e.key === 'PrintScreen') {
-      document.body.style.filter = 'blur(10px)';
-      setTimeout(() => document.body.style.filter = '', 1000);
-    }
-  });
-  document.body.style.userSelect = 'none';
-  setInterval(() => {
-    const devtools = /./;
-    devtools.toString = () => {
-      alert("Developer Tools are disabled.");
-    };
-  }, 1000);
+});
+
+// 💡 Security Features
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+    e.key === 'F11'
+  ) {
+    e.preventDefault();
+  }
+});
+document.addEventListener('keyup', e => {
+  if (e.key === 'PrintScreen') {
+    document.body.style.filter = 'blur(10px)';
+    setTimeout(() => document.body.style.filter = '', 1000);
+  }
+});
+document.body.style.userSelect = 'none';
+setInterval(() => {
+  const devtools = /./;
+  devtools.toString = function () {
+    alert("Developer Tools are disabled.");
+  };
+}, 1000);
 </script>
 
 
